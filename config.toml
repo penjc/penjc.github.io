@@ -10,11 +10,6 @@ pygmentsUseClasses = true
   author = "penjc"
   description = "In solitude, where we are least alone."
   github = "penjc"
-  facebook = "penjc"
-  twitter = "penjc"
-  linkedin = "MeiK2333"
-  instagram = "MeiK2333"
-  tumblr = "penjc"
   email = "15021823663@163.com"
   url = "https://penjc.github.io"
   keywords = "blog, google analytics"
@@ -38,13 +33,7 @@ pygmentsUseClasses = true
     createIssueManually = true 
     distractionFreeMode = false 
     proxy = "https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"
-  [[params.links]]
-    title = "Link"
-    href = "https://github.com/meik2333"
-  [[params.links]]
-    title = "Link2"
-    href = "https://meik2333.com"
-    icon = "https://meik2333.com/images/avatar.png"
+
 
 [frontmatter]
   lastmod = ["lastmod", ":fileModTime", ":default"]
