@@ -1,0 +1,50 @@
+
+languageCode = "zh-cn"
+title = "penjc's blog"
+theme = "github-style"
+googleAnalytics = "UA-123456-789"
+pygmentsCodeFences = true
+pygmentsUseClasses = true
+
+[params]
+  author = "penjc"
+  description = "In solitude, where we are least alone."
+  github = "penjc"
+  facebook = "penjc"
+  twitter = "penjc"
+  linkedin = "MeiK2333"
+  instagram = "MeiK2333"
+  tumblr = "penjc"
+  email = "15021823663@163.com"
+  url = "https://penjc.github.io"
+  keywords = "blog, google analytics"
+  rss = true
+  lastmod = true
+  favicon = "/images/github.png"
+  location = "China"
+  userStatusEmoji = "?"
+  enableGitalk = true
+    
+  [params.gitalk]
+    clientID = "Your client ID" # Your client ID
+    clientSecret = "Your client secret" # Your client secret
+    repo = "penjc" 
+    owner = "penjc" 
+    admin = "penjc" 
+    id = "location.pathname" 
+    labels = "gitalk" # Github issue labels. If you used to use Gitment, you can change it
+    perPage = 15 
+    pagerDirection = "last" 
+    createIssueManually = true 
+    distractionFreeMode = false 
+    proxy = "https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"
+  [[params.links]]
+    title = "Link"
+    href = "https://github.com/meik2333"
+  [[params.links]]
+    title = "Link2"
+    href = "https://meik2333.com"
+    icon = "https://meik2333.com/images/avatar.png"
+
+[frontmatter]
+  lastmod = ["lastmod", ":fileModTime", ":default"]
