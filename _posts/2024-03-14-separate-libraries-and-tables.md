@@ -55,7 +55,22 @@ tags:
 
 ## 引入 ShardingSphere-JDBC到项目
 ### 引入依赖
+```yaml
+<dependency>
+    <groupId>org.apache.shardingsphere</groupId>
+    <artifactId>shardingsphere-jdbc-core</artifactId>
+    <version>5.3.2</version>
+</dependency>
+```
 ### 定义分片规则
+```yaml
+spring:
+  datasource:
+  	# ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # ShardingSphere 配置文件路径
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
+```
 #### shardingsphere-config.yaml
 ```yaml
 # 数据源集合
