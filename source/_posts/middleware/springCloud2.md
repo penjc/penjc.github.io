@@ -6,7 +6,7 @@ tags:
   - SpringCloud
   - 中间件
 categories:
-  - [中间件]
+  - [中间件, SpringCloud]
 #cover: cover.jpg # 文章顶部和文章介绍图（将覆盖文章主页轮播图）
 ---
 

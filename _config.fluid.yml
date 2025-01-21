@@ -373,7 +373,7 @@ navbar:
     - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
     - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
     - { key: "links", link: "/links/", icon: "iconfont icon-link-fill" }
-    - { key: "", link: "https://github.com/penjc", icon: "iconfont icon-github-fill" }
+    - { key: "", link: "https://github.com/penjc", icon: "iconfont icon-github-fill", target: "_blank"}
 #      二级菜单
 #    - {
 #      key: '文档',
