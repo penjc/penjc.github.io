@@ -817,8 +817,8 @@ post:
 # Based on GitHub Issues
 # See: https://utteranc.es
 utterances:
-  repo:
-  issue_term: https://github.com/penjc/penjc.github.io/issues
+  repo: https://github.com/penjc/penjc.github.io
+  issue_term: 'title'
   label: utterances
   theme: github-light
   theme_dark: github-dark
