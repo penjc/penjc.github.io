@@ -1,7 +1,7 @@
 ---
 title: 关于我
 layout: about
-comments: 'utterances'
+comments: true
 ---
 
 # 关于我
