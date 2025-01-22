@@ -7,7 +7,7 @@ tags:
   - 中间件
 categories:
   - [中间件]
-#cover: cover.jpg # 文章顶部和文章介绍图（将覆盖文章主页轮播图）
+hide: true
 ---
 
 ## Mybatis
