@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="penjc">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="新增短链接代码中的主要组件包括数据库操作、短链接生成、布隆过滤器等。 服务实现类 LinkServiceImpl 继承和实现：LinkServiceImpl 类继承了 MyBatis-Plus 的 ServiceImpl，实现了 ShortLinkService 接口。通过这种方式，LinkServiceImpl 类可以享受 MyBatis-Plus 提供的 CRUD 操作，同时可以扩展自定义的业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新增短链接">
+<meta property="og:url" content="https://penjc.github.io/2024/03/07/java/shortlink/addNewLink/index.html">
+<meta property="og:site_name" content="penjc">
+<meta property="og:description" content="新增短链接代码中的主要组件包括数据库操作、短链接生成、布隆过滤器等。 服务实现类 LinkServiceImpl 继承和实现：LinkServiceImpl 类继承了 MyBatis-Plus 的 ServiceImpl，实现了 ShortLinkService 接口。通过这种方式，LinkServiceImpl 类可以享受 MyBatis-Plus 提供的 CRUD 操作，同时可以扩展自定义的业">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-27T00:27:14.094Z">
+<meta property="article:author" content="penjc">
+<meta property="article:tag" content="JAVA">
+<meta property="article:tag" content="ShortLink">
+<meta property="article:tag" content="Project">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>新增短链接 - penjc</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"penjc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"JAVA"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>penjc</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/penjc" target="_blank">
+                <i class="iconfont icon-github-fill"></i>
+                <span></span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://images.unsplash.com/photo-1507941097613-9f2157b69235?q=80&w=3043&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="新增短链接"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-07 00:00" pubdate>
+          2024年3月7日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">新增短链接</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="新增短链接"><a href="#新增短链接" class="headerlink" title="新增短链接"></a>新增短链接</h1><p>代码中的主要组件包括数据库操作、短链接生成、布隆过滤器等。</p>
+<h2 id="服务实现类-LinkServiceImpl"><a href="#服务实现类-LinkServiceImpl" class="headerlink" title="服务实现类 LinkServiceImpl"></a><strong>服务实现类 <code>LinkServiceImpl</code></strong></h2><ul>
+<li><strong>继承和实现</strong>：<code>LinkServiceImpl</code> 类继承了 MyBatis-Plus 的 <code>ServiceImpl</code>，实现了 <code>ShortLinkService</code> 接口。通过这种方式，<code>LinkServiceImpl</code> 类可以享受 MyBatis-Plus 提供的 CRUD 操作，同时可以扩展自定义的业务逻辑。</li>
+<li><strong>构造器注入</strong>：使用了 <code>@RequiredArgsConstructor</code> 注解，自动生成一个构造器来注入所有的 <code>final</code> 字段（依赖注入），这减少了显式的构造方法编写。</li>
+</ul>
+<h2 id="短链接创建方法：create"><a href="#短链接创建方法：create" class="headerlink" title="短链接创建方法：create"></a><strong>短链接创建方法：<code>create</code></strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> ShortLinkCreateRespDTO <span class="hljs-title function_">create</span><span class="hljs-params">(ShortLinkCreateReqDTO requestParam)</span> &#123;<br>    <span class="hljs-comment">// 生成短链接后缀</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">shortLinkSuffix</span> <span class="hljs-operator">=</span> generateSuffix(requestParam);<br>    <span class="hljs-type">String</span> <span class="hljs-variable">fullShortUrl</span> <span class="hljs-operator">=</span> requestParam.getDomain() + <span class="hljs-string">&quot;/&quot;</span> + shortLinkSuffix;<br><br>    <span class="hljs-comment">// 创建 ShortLinkDO 对象</span><br>    <span class="hljs-type">ShortLinkDO</span> <span class="hljs-variable">shortLink</span> <span class="hljs-operator">=</span> BeanUtil.toBean(requestParam, ShortLinkDO.class);<br>    shortLink.setShortUri(shortLinkSuffix);<br>    shortLink.setFullShortUrl(fullShortUrl);<br>    shortLink.setEnableStatus(<span class="hljs-number">0</span>);<br><br>    <span class="hljs-comment">// 防止短链接误判，重复插入数据库，fullShortUrl 为唯一索引，捕获重复异常</span><br>    <span class="hljs-keyword">try</span> &#123;<br>        baseMapper.insert(shortLink);<br>    &#125; <span class="hljs-keyword">catch</span> (DuplicateKeyException ex) &#123;<br>        <span class="hljs-comment">// 误判的短链接如何处理</span><br>        LambdaQueryWrapper&lt;ShortLinkDO&gt; hasShortLink = Wrappers.lambdaQuery(ShortLinkDO.class)<br>                .eq(ShortLinkDO::getFullShortUrl, shortLink.getFullShortUrl());<br>        <span class="hljs-keyword">if</span> (hasShortLink != <span class="hljs-literal">null</span>) &#123;<br>            log.warn(<span class="hljs-string">&quot;短链接：&#123;&#125; 重复入库&quot;</span>, fullShortUrl);<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceException</span>(<span class="hljs-string">&quot;短链接生成重复&quot;</span>);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment">// 将生成的短链接加入布隆过滤器，防止重复</span><br>    shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);<br><br>    <span class="hljs-comment">// 返回短链接创建结果</span><br>    <span class="hljs-keyword">return</span> ShortLinkCreateRespDTO.builder()<br>            .fullShortUrl(shortLink.getFullShortUrl())<br>            .originUrl(shortLink.getOriginUrl())<br>            .gid(shortLink.getGid())<br>            .build();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="功能描述："><a href="#功能描述：" class="headerlink" title="功能描述："></a><strong>功能描述</strong>：</h3><ul>
+<li><strong>生成短链接后缀</strong>：调用 <code>generateSuffix(requestParam)</code> 方法生成短链接的后缀（<code>shortLinkSuffix</code>），然后将后缀与用户提供的域名结合，形成完整的短链接 URL（<code>fullShortUrl</code>）。</li>
+<li><strong>创建 <code>ShortLinkDO</code> 实体</strong>：将接收到的请求参数 <code>requestParam</code> 转换成 <code>ShortLinkDO</code> 实体对象，并设置短链接的相关信息，包括：<ul>
+<li><code>shortUri</code>：短链接后缀。</li>
+<li><code>fullShortUrl</code>：完整的短链接。</li>
+<li><code>enableStatus</code>：表示短链接的状态，默认为 0（可能代表未启用）。</li>
+</ul>
+</li>
+<li><strong>防止重复插入</strong>：为了避免数据库中插入重复的短链接，代码中利用了 <strong>唯一索引</strong> (<code>fullShortUrl</code>)，并在插入操作时捕获 <code>DuplicateKeyException</code> 异常：<ul>
+<li>若插入操作抛出 <code>DuplicateKeyException</code>，说明该短链接已经存在（可能是由于布隆过滤器误判）。</li>
+<li>通过查询数据库，检查是否已经存在相同的 <code>fullShortUrl</code>，如果存在，抛出自定义的 <code>ServiceException</code> 异常，标识短链接生成失败。</li>
+</ul>
+</li>
+<li><strong>布隆过滤器</strong>：使用 <code>RBloomFilter</code> 来存储已生成的短链接，避免重复生成。每当生成一个新的短链接时，都会将该短链接 URL 加入布隆过滤器，这样后续的请求可以通过布隆过滤器快速判断该短链接是否已存在。</li>
+<li><strong>返回短链接信息</strong>：返回包含生成的短链接信息的响应对象 <code>ShortLinkCreateRespDTO</code>，包括：<ul>
+<li><code>fullShortUrl</code>：生成的完整短链接。</li>
+<li><code>originUrl</code>：原始 URL。</li>
+<li><code>gid</code>：可能是生成短链接时关联的 ID。</li>
+</ul>
+</li>
+</ul>
+<h2 id="短链接后缀生成方法：generateSuffix"><a href="#短链接后缀生成方法：generateSuffix" class="headerlink" title="短链接后缀生成方法：generateSuffix"></a><strong>短链接后缀生成方法：<code>generateSuffix</code></strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> String <span class="hljs-title function_">generateSuffix</span><span class="hljs-params">(ShortLinkCreateReqDTO requestParam)</span> &#123;<br>    String shortUri;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        <span class="hljs-keyword">if</span> (count &gt; <span class="hljs-number">10</span>) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceException</span>(<span class="hljs-string">&quot;短链接创建频繁，稍后再试&quot;</span>);<br>        &#125;<br>        <span class="hljs-comment">// 降低布隆过滤器冲突率</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">originUrl</span> <span class="hljs-operator">=</span> requestParam.getOriginUrl();<br>        originUrl += System.currentTimeMillis();<br>        shortUri = HashUtil.hashToBase62(originUrl);<br><br>        <span class="hljs-comment">// 如果布隆过滤器中不存在该短链接，跳出循环</span><br>        <span class="hljs-keyword">if</span> (!shortUriCreateCachePenetrationBloomFilter.contains(requestParam.getDomain() + <span class="hljs-string">&quot;/&quot;</span> + shortUri)) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        count++;<br>    &#125;<br>    <span class="hljs-keyword">return</span> shortUri;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="功能描述：-1"><a href="#功能描述：-1" class="headerlink" title="功能描述："></a><strong>功能描述</strong>：</h3><ul>
+<li><strong>生成短链接后缀</strong>：通过对原始 URL 加上当前时间戳进行哈希处理（<code>HashUtil.hashToBase62()</code>）来生成短链接的后缀 <code>shortUri</code>。<ul>
+<li><strong>防止哈希冲突</strong>：每次生成短链接后缀时，代码会加上当前的时间戳（<code>System.currentTimeMillis()</code>）来减少布隆过滤器的冲突率。如果相同的 URL 被多次请求生成短链接，这样可以生成不同的短链接后缀，减少短链接冲突的几率。</li>
+</ul>
+</li>
+<li><strong>布隆过滤器检查</strong>：生成后缀后，使用布隆过滤器检查该短链接是否已存在。如果已经存在，重新生成短链接后缀，直到生成一个未被占用的短链接。最多重试 10 次，超过 10 次则抛出 <code>ServiceException</code>，提示用户短链接创建过于频繁。</li>
+</ul>
+<h2 id="异常处理与误判短链接的处理"><a href="#异常处理与误判短链接的处理" class="headerlink" title="异常处理与误判短链接的处理"></a><strong>异常处理与误判短链接的处理</strong></h2><ul>
+<li><strong>误判的原因</strong>：布隆过滤器是一个概率性的数据结构，虽然其误判率较低，但仍然可能出现误判的情况。例如，布隆过滤器可能会误判某个短链接已经存在，从而导致生成相同的短链接。</li>
+<li><strong>处理重复短链接</strong>：<ul>
+<li>如果在插入数据库时捕获到 <code>DuplicateKeyException</code>，说明短链接的唯一性被违反，表明该短链接已存在。</li>
+<li>通过 <code>LambdaQueryWrapper</code> 查询数据库中是否已存在相同的 <code>fullShortUrl</code>。</li>
+<li>如果数据库中确实存在该短链接，日志记录该重复入库的情况，并抛出自定义异常 <code>ServiceException</code>，通知前端或业务层短链接生成失败。</li>
+</ul>
+</li>
+</ul>
+<h2 id="日志记录与监控"><a href="#日志记录与监控" class="headerlink" title="日志记录与监控"></a><strong>日志记录与监控</strong></h2><ul>
+<li>在捕获到 <code>DuplicateKeyException</code> 后，代码通过 <code>log.warn</code> 记录了警告日志，提示短链接重复入库。这有助于开发人员或运维人员监控系统的健康状态。</li>
+</ul>
+<h2 id="设计考量与优化"><a href="#设计考量与优化" class="headerlink" title="设计考量与优化"></a><strong>设计考量与优化</strong></h2><ul>
+<li><strong>性能优化</strong>：布隆过滤器在判断短链接是否已存在时具有高效的查找性能，避免了每次都需要访问数据库，从而提升了系统的性能。</li>
+<li><strong>容错机制</strong>：通过 <code>DuplicateKeyException</code> 异常捕获和数据库查询，系统能够处理布隆过滤器的误判，确保最终数据库中的数据正确无误。</li>
+<li><strong>防止过度请求</strong>：在 <code>generateSuffix</code> 方法中加入了重试限制（最多 10 次），防止短链接生成过于频繁导致系统负载过高。</li>
+</ul>
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>这段代码实现了一个简易的短链接生成服务，通过结合布隆过滤器、唯一索引、哈希算法等技术，确保生成的短链接唯一且高效。在高并发场景下，能够较好地处理重复短链接的生成问题，同时提供了合理的容错机制来应对可能的误判和异常情况。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/JAVA/" class="category-chain-item">JAVA</a>
+  
+  
+
+      </span>
+    
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="category-chain-item">项目</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JAVA/" class="print-no-link">#JAVA</a>
+      
+        <a href="/tags/ShortLink/" class="print-no-link">#ShortLink</a>
+      
+        <a href="/tags/Project/" class="print-no-link">#Project</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>新增短链接</div>
+      <div>https://penjc.github.io/2024/03/07/java/shortlink/addNewLink/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>penjc</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/03/09/java/shortlink/shortLinkPageQuery/" title="短链接分页查询">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">短链接分页查询</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/02/13/java/2023-02-13-springboot/" title="SpringBoot">
+                        <span class="hidden-mobile">SpringBoot</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"3yOxzSlbiihJbVhqgryxzKsF-gzGzoHsz","appKey":"aVdXHOGjbCGgDyrNrbazROse","path":"window.location.pathname","placeholder":"欢迎留言","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":true,"recordIP":true,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Copyright © 2025 penjc. Powered by <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
