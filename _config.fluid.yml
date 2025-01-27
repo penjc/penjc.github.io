@@ -1079,8 +1079,8 @@ links:
     - {
       title: "CityU 手册",
       intro: "香港城市大学一站式指南",
-      link: "https://penjc.github.io/CityU/",
-      avatar: "https://penjc.github.io/CityU/img/logo.svg"
+      link: "https://cityuhk.cn/",
+      avatar: "https://cityuhk.cn/img/logo.svg"
     }
 
   # 当成员头像加载失败时，替换为指定图片
