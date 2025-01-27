@@ -64,36 +64,72 @@ hexo new page example
 ```
 2.创建成功后编辑博客目录下 /source/example/index.md：
 
-## Quick Start
-
-### Create a new post
-
-``` bash
-$ hexo new "My New Post"
+### 修改历史提交记录
+```bash
+git filter-branch -f --env-filter '
+OLD_EMAIL="2686728826@qq.com"
+CORRECT_NAME="PENG"
+CORRECT_EMAIL="jcpeng3-c@my.cityu.edu.hk"
+if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
+then
+export GIT_COMMITTER_NAME="$CORRECT_NAME"
+export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"
+fi
+if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]
+then
+export GIT_AUTHOR_NAME="$CORRECT_NAME"
+export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
+fi
+' --tag-name-filter cat -- --branches --tags
 ```
+### 常见的提交类型
+在代码提交中，常见的提交类型（如 feature 和 refactor）通常是基于 Conventional Commits 规范的。
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+#### feat (feature)
 
-### Run server
+表示新增功能。
+例如：feat: 添加用户登录功能
+#### fix
 
-``` bash
-$ hexo server
-```
+表示修复 bug。
+例如：fix: 修复无法保存用户数据的问题
+#### refactor
 
-More info: [Server](https://hexo.io/docs/server.html)
+表示代码重构，既不影响功能，也不修复 bug。
+例如：refactor: 优化查询逻辑以提高性能
+#### docs
 
-### Generate static files
+表示仅修改文档。
+例如：docs: 更新 README 文件中的安装指南
+#### style
 
-``` bash
-$ hexo generate
-```
+表示代码格式化修改，与功能无关（例如空格、缩进、分号等）。
+例如：style: 调整代码缩进以符合规范
+#### test
 
-More info: [Generating](https://hexo.io/docs/generating.html)
+表示添加或修改测试。
+例如：test: 添加单元测试用例以覆盖 edge case
+#### chore
 
-### Deploy to remote sites
+表示杂项更新，与代码运行逻辑无关（如构建工具配置、CI/CD 配置）。
+例如：chore: 更新 npm 依赖版本
+#### perf
 
-``` bash
-$ hexo deploy
-```
+表示性能优化。
+例如：perf: 优化循环处理逻辑以降低时间复杂度
+#### build
 
-More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+表示构建系统或外部依赖的修改（如升级 npm 包、修改 Webpack 配置）。
+例如：build: 升级 Babel 版本到 v7.20
+#### ci
+
+表示与持续集成相关的更改。
+例如：ci: 修改 GitHub Actions 配置以支持多平台测试
+#### revert
+
+表示回滚之前的提交。
+例如：revert: 回滚 "feat: 添加支付功能"
+#### hotfix
+
+表示紧急修复问题（不是官方规范的一部分，但常用）。
+例如：hotfix: 修复生产环境崩溃问题
