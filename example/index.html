@@ -290,6 +290,101 @@
 <h4 id="ci"><a href="#ci" class="headerlink" title="ci"></a>ci</h4><p>表示与持续集成相关的更改。<br>例如：ci: 修改 GitHub Actions 配置以支持多平台测试</p>
 <h4 id="revert"><a href="#revert" class="headerlink" title="revert"></a>revert</h4><p>表示回滚之前的提交。<br>例如：revert: 回滚 “feat: 添加支付功能”</p>
 <h4 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h4><p>表示紧急修复问题（不是官方规范的一部分，但常用）。<br>例如：hotfix: 修复生产环境崩溃问题</p>
+<hr>
+<h1 id="Nginx-配置与网站自动更新总结"><a href="#Nginx-配置与网站自动更新总结" class="headerlink" title="Nginx 配置与网站自动更新总结"></a><strong>Nginx 配置与网站自动更新总结</strong></h1><h2 id="1-Nginx-站点配置文件-etc-nginx-sites-available-cityu-website"><a href="#1-Nginx-站点配置文件-etc-nginx-sites-available-cityu-website" class="headerlink" title="1. Nginx 站点配置文件 /etc/nginx/sites-available/cityu-website"></a><strong>1. Nginx 站点配置文件 <code>/etc/nginx/sites-available/cityu-website</code></strong></h2><h3 id="配置-HTTPS-及自动跳转"><a href="#配置-HTTPS-及自动跳转" class="headerlink" title="配置 HTTPS 及自动跳转"></a><strong>配置 HTTPS 及自动跳转</strong></h3><p>编辑 Nginx 站点配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /etc/nginx/sites-available/cityu-website<br></code></pre></td></tr></table></figure>
+
+<h4 id="配置内容"><a href="#配置内容" class="headerlink" title="配置内容"></a><strong>配置内容</strong></h4><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>    <span class="hljs-attribute">server_name</span> _;<br><br>    <span class="hljs-comment"># HTTP 重定向到 HTTPS</span><br>    <span class="hljs-attribute">return</span> <span class="hljs-number">301</span> https://<span class="hljs-variable">$host</span><span class="hljs-variable">$request_uri</span>;<br>&#125;<br><br><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">443</span> ssl;<br>    <span class="hljs-attribute">server_name</span> _;<br><br>    <span class="hljs-attribute">root</span> /var/www/cityu-website;<br>    <span class="hljs-attribute">index</span> index.html;<br><br>    <span class="hljs-comment"># SSL 证书路径</span><br>    <span class="hljs-attribute">ssl_certificate</span> /etc/nginx/ssl/stepforx.com_bundle.crt;<br>    <span class="hljs-attribute">ssl_certificate_key</span> /etc/nginx/ssl/stepforx.com.key;<br><br>    <span class="hljs-attribute">ssl_session_timeout</span> <span class="hljs-number">5m</span>;<br>    <span class="hljs-attribute">ssl_protocols</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>;<br>    <span class="hljs-attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5;<br>    <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-comment"># 网站路径</span><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">alias</span> /var/www/cityu-website/;<br>        <span class="hljs-attribute">index</span> index.html;<br>        <span class="hljs-attribute">try_files</span> <span class="hljs-variable">$uri</span> <span class="hljs-variable">$uri</span>/ /index.html;<br>    &#125;<br><br>    <span class="hljs-comment"># 其他路径</span><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">try_files</span> <span class="hljs-variable">$uri</span> <span class="hljs-variable">$uri</span>/ =<span class="hljs-number">404</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>启用配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">ln</span> -s /etc/nginx/sites-available/cityu-website /etc/nginx/sites-enabled/<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="2-安装-SSL-证书"><a href="#2-安装-SSL-证书" class="headerlink" title="2. 安装 SSL 证书"></a><strong>2. 安装 SSL 证书</strong></h2><ol>
+<li><p><strong>上传 SSL 证书</strong>：</p>
+<ul>
+<li>将 <code>stepforx.com_bundle.crt</code> 和 <code>stepforx.com.key</code> 上传到 <code>/etc/nginx/ssl/</code></li>
+<li>确保目录存在：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mkdir</span> -p /etc/nginx/ssl<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> stepforx.com_bundle.crt stepforx.com.key /etc/nginx/ssl/<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>验证 Nginx 配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nginx -t<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>重启 Nginx</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="3-Nginx-全局配置-etc-nginx-nginx-conf"><a href="#3-Nginx-全局配置-etc-nginx-nginx-conf" class="headerlink" title="3. Nginx 全局配置 /etc/nginx/nginx.conf"></a><strong>3. Nginx 全局配置 <code>/etc/nginx/nginx.conf</code></strong></h2><p>编辑主配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /etc/nginx/nginx.conf<br></code></pre></td></tr></table></figure>
+
+<p><strong>确保包含以下内容</strong>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> www-data;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><span class="hljs-attribute">include</span> /etc/nginx/modules-enabled/<span class="hljs-regexp">*.conf</span>;<br><br><span class="hljs-section">events</span> &#123;<br>    <span class="hljs-attribute">worker_connections</span> <span class="hljs-number">768</span>;<br>&#125;<br><br><span class="hljs-section">http</span> &#123;<br>    <span class="hljs-attribute">include</span> /etc/nginx/mime.types;<br>    <span class="hljs-attribute">default_type</span> application/octet-stream;<br><br>    <span class="hljs-attribute">sendfile</span> <span class="hljs-literal">on</span>;<br>    <span class="hljs-attribute">tcp_nopush</span> <span class="hljs-literal">on</span>;<br>    <span class="hljs-attribute">types_hash_max_size</span> <span class="hljs-number">2048</span>;<br><br>    <span class="hljs-attribute">access_log</span> /var/log/nginx/access.log;<br><br>    <span class="hljs-attribute">gzip</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-attribute">ssl_protocols</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>;<br>    <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-attribute">include</span> /etc/nginx/sites-enabled/*;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>应用更改</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nginx -t<br><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-更新-build-文件夹"><a href="#4-更新-build-文件夹" class="headerlink" title="4. 更新 build 文件夹"></a><strong>4. 更新 <code>build</code> 文件夹</strong></h2><p>每次更新 <code>build</code> 文件后，需要执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">rm</span> -rf /var/www/cityu-website/*<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cp</span> -r /path/to/new-build/* /var/www/cityu-website/<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chown</span> -R www-data:www-data /var/www/cityu-website<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> -R 755 /var/www/cityu-website<br><span class="hljs-built_in">sudo</span> nginx -t<br><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-自动更新脚本"><a href="#5-自动更新脚本" class="headerlink" title="5. 自动更新脚本"></a><strong>5. 自动更新脚本</strong></h2><p>创建自动更新脚本 <code>/usr/local/bin/update-website.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+<p><strong>脚本内容</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br><br>TARGET_DIR=<span class="hljs-string">&quot;/var/www/cityu-website&quot;</span><br>REPO_URL=<span class="hljs-string">&quot;git@gitee.com:penjc/cityu-build.git&quot;</span><br>TEMP_DIR=<span class="hljs-string">&quot;/tmp/cityu-build&quot;</span><br><br><span class="hljs-comment"># 拉取最新代码</span><br><span class="hljs-keyword">if</span> [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span> ]; <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br><span class="hljs-keyword">fi</span><br><br>git <span class="hljs-built_in">clone</span> <span class="hljs-string">&quot;<span class="hljs-variable">$REPO_URL</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br><br><span class="hljs-comment"># 覆盖目标目录</span><br><span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>/*&quot;</span><br><span class="hljs-built_in">cp</span> -r <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>/&quot;</span>* <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>/&quot;</span><br><br><span class="hljs-comment"># 设置权限</span><br><span class="hljs-built_in">chown</span> -R www-data:www-data <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>&quot;</span><br><span class="hljs-built_in">chmod</span> -R 755 <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>&quot;</span><br><br><span class="hljs-comment"># 重载 Nginx</span><br>systemctl reload nginx<br><br><span class="hljs-comment"># 清理临时目录</span><br><span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>设置可执行权限</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> +x /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="6-定时任务（每天凌晨-1-点自动更新）"><a href="#6-定时任务（每天凌晨-1-点自动更新）" class="headerlink" title="6. 定时任务（每天凌晨 1 点自动更新）"></a><strong>6. 定时任务（每天凌晨 1 点自动更新）</strong></h2><p>使用 <code>crontab</code> 设置定时任务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> crontab -e<br></code></pre></td></tr></table></figure>
+
+<p>添加以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">0 1 * * * /usr/local/bin/update-website.sh &gt;&gt; /var/log/update-website.log 2&gt;&amp;1<br></code></pre></td></tr></table></figure>
+
+<p><strong>测试任务是否生效</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> crontab -l<br></code></pre></td></tr></table></figure>
+
+<p><strong>手动运行测试</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+<h3 id="7-任务总结"><a href="#7-任务总结" class="headerlink" title="7. 任务总结"></a><strong>7. 任务总结</strong></h3><table>
+<thead>
+<tr>
+<th>任务</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>验证 Nginx 配置</strong></td>
+<td><code>sudo nginx -t</code></td>
+</tr>
+<tr>
+<td><strong>重载 Nginx</strong></td>
+<td><code>sudo systemctl reload nginx</code></td>
+</tr>
+<tr>
+<td><strong>更新 <code>build</code> 文件夹</strong></td>
+<td><code>sudo rm -rf /var/www/cityu-website/* &amp;&amp; sudo cp -r /path/to/new-build/* /var/www/cityu-website/</code></td>
+</tr>
+<tr>
+<td><strong>设置权限</strong></td>
+<td><code>sudo chown -R www-data:www-data /var/www/cityu-website &amp;&amp; sudo chmod -R 755 /var/www/cityu-website</code></td>
+</tr>
+<tr>
+<td><strong>手动运行更新脚本</strong></td>
+<td><code>sudo /usr/local/bin/update-website.sh</code></td>
+</tr>
+<tr>
+<td><strong>查看定时任务</strong></td>
+<td><code>sudo crontab -l</code></td>
+</tr>
+</tbody></table>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a><strong>最终效果</strong></h3><ul>
+<li>Nginx 配置了 <strong>HTTPS</strong> 并支持 <strong>自动跳转 HTTP → HTTPS</strong>。</li>
+<li>服务器每天 <strong>凌晨 1 点自动从 Gitee 拉取代码并部署</strong>。</li>
+<li>所有更新会自动 <strong>应用权限</strong> 并 <strong>重载 Nginx</strong>。</li>
+</ul>
+<hr>
 
 
   
