@@ -134,73 +134,153 @@ fi
 表示紧急修复问题（不是官方规范的一部分，但常用）。
 例如：hotfix: 修复生产环境崩溃问题
 
-### nginx 操作
-```
-sudo chown -R www-data:www-data /var/www/cityu-website
-sudo chmod -R 755 /var/www/cityu-website
+---
+
+# **Nginx 配置与网站自动更新总结**
+
+## **1. Nginx 站点配置文件 `/etc/nginx/sites-available/cityu-website`**
+### **配置 HTTPS 及自动跳转**
+编辑 Nginx 站点配置：
+```bash
+sudo nano /etc/nginx/sites-available/cityu-website
 ```
 
-### 重启 nginx
+#### **配置内容**
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    # HTTP 重定向到 HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name _;
+
+    root /var/www/cityu-website;
+    index index.html;
+
+    # SSL 证书路径
+    ssl_certificate /etc/nginx/ssl/stepforx.com_bundle.crt;
+    ssl_certificate_key /etc/nginx/ssl/stepforx.com.key;
+
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    # 网站路径
+    location / {
+        alias /var/www/cityu-website/;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 其他路径
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+```
+
+**启用配置**：
 ```bash
+sudo ln -s /etc/nginx/sites-available/cityu-website /etc/nginx/sites-enabled/
+```
+
+
+## **2. 安装 SSL 证书**
+1. **上传 SSL 证书**：
+   - 将 `stepforx.com_bundle.crt` 和 `stepforx.com.key` 上传到 `/etc/nginx/ssl/`
+   - 确保目录存在：
+     ```bash
+     sudo mkdir -p /etc/nginx/ssl
+     sudo mv stepforx.com_bundle.crt stepforx.com.key /etc/nginx/ssl/
+     ```
+
+2. **验证 Nginx 配置**：
+   ```bash
+   sudo nginx -t
+   ```
+
+3. **重启 Nginx**：
+   ```bash
+   sudo systemctl reload nginx
+   ```
+
+
+## **3. Nginx 全局配置 `/etc/nginx/nginx.conf`**
+编辑主配置文件：
+```bash
+sudo nano /etc/nginx/nginx.conf
+```
+
+**确保包含以下内容**：
+```nginx
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+    worker_connections 768;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    sendfile on;
+    tcp_nopush on;
+    types_hash_max_size 2048;
+
+    access_log /var/log/nginx/access.log;
+
+    gzip on;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    include /etc/nginx/sites-enabled/*;
+}
+```
+
+**应用更改**：
+```bash
+sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-可以通过 **crontab** 设置定时任务，每天凌晨 1 点从 Gitee 仓库拉取代码，覆盖指定目录，然后执行权限设置和重载 Nginx 的操作。
-
-以下是完整的实现步骤：
-
----
-## 🕒 定时拉取代码并部署
-### **1. 确保 Gitee 仓库的 SSH 访问已配置（推荐）**
-为了避免每次拉取代码需要输入密码，建议配置 Gitee 的 SSH 密钥。
-
-#### **1.1 生成 SSH 密钥**
-如果服务器还没有 SSH 密钥，可以生成一个：
+## **4. 更新 `build` 文件夹**
+每次更新 `build` 文件后，需要执行：
 ```bash
-ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+sudo rm -rf /var/www/cityu-website/*
+sudo cp -r /path/to/new-build/* /var/www/cityu-website/
+sudo chown -R www-data:www-data /var/www/cityu-website
+sudo chmod -R 755 /var/www/cityu-website
+sudo nginx -t
+sudo systemctl reload nginx
 ```
-按提示操作，生成的密钥文件默认位于 `~/.ssh/id_rsa`。
 
-#### **1.2 添加公钥到 Gitee**
-1. 打开 `~/.ssh/id_rsa.pub`，复制其中的内容：
-   ```bash
-   cat ~/.ssh/id_rsa.pub
-   ```
-
-2. 登录 Gitee，前往 **"账号设置" > "SSH公钥"**，将公钥添加到你的账号中。
-
-#### **1.3 测试 SSH 连接**
-执行以下命令，确保可以通过 SSH 连接到 Gitee：
+## **5. 自动更新脚本**
+创建自动更新脚本 `/usr/local/bin/update-website.sh`：
 ```bash
-ssh -T git@gitee.com
-```
-如果成功，会显示类似：
-```
-Welcome to Gitee.com!
+sudo nano /usr/local/bin/update-website.sh
 ```
 
----
-
-### **2. 创建拉取代码并部署的脚本**
-创建一个脚本，用于从 Gitee 拉取代码、覆盖目标目录并设置权限。
-
-#### **脚本路径**：
-假设脚本存放在 `/usr/local/bin/update-website.sh`。
-
-#### **脚本内容**：
+**脚本内容**：
 ```bash
 #!/bin/bash
 
-# 目标目录和仓库地址
 TARGET_DIR="/var/www/cityu-website"
 REPO_URL="git@gitee.com:penjc/cityu-build.git"
-
-# 临时目录
 TEMP_DIR="/tmp/cityu-build"
 
 # 拉取最新代码
 if [ -d "$TEMP_DIR" ]; then
-  rm -rf "$TEMP_DIR"
+    rm -rf "$TEMP_DIR"
 fi
 
 git clone "$REPO_URL" "$TEMP_DIR"
@@ -220,53 +300,50 @@ systemctl reload nginx
 rm -rf "$TEMP_DIR"
 ```
 
-#### **设置脚本权限**：
+**设置可执行权限**：
 ```bash
 sudo chmod +x /usr/local/bin/update-website.sh
 ```
 
----
 
-### **3. 添加定时任务**
-使用 `crontab` 设置每天凌晨 1 点执行脚本。
-
-#### **编辑定时任务**：
-打开 `crontab` 配置：
+## **6. 定时任务（每天凌晨 1 点自动更新）**
+使用 `crontab` 设置定时任务：
 ```bash
 sudo crontab -e
 ```
 
-#### **添加以下内容**：
+添加以下内容：
 ```bash
 0 1 * * * /usr/local/bin/update-website.sh >> /var/log/update-website.log 2>&1
 ```
 
-**解释**：
-- `0 1 * * *`：每天凌晨 1 点执行。
-- `>> /var/log/update-website.log 2>&1`：将脚本输出和错误日志记录到 `/var/log/update-website.log`。
-
----
-
-### **4. 验证定时任务**
-#### **手动运行脚本测试**：
-在配置完成后，手动运行脚本以确保其工作正常：
-```bash
-sudo /usr/local/bin/update-website.sh
-```
-
-#### **检查日志**：
-如果没有错误，可以查看 `/var/log/update-website.log` 确认是否记录成功。
-
-#### **查看定时任务是否生效**：
-使用以下命令确认定时任务是否已加载：
+**测试任务是否生效**：
 ```bash
 sudo crontab -l
 ```
 
+**手动运行测试**：
+```bash
+sudo /usr/local/bin/update-website.sh
+```
+
+### **7. 任务总结**
+| 任务 | 命令 |
+|------|------|
+| **验证 Nginx 配置** | `sudo nginx -t` |
+| **重载 Nginx** | `sudo systemctl reload nginx` |
+| **更新 `build` 文件夹** | `sudo rm -rf /var/www/cityu-website/* && sudo cp -r /path/to/new-build/* /var/www/cityu-website/` |
+| **设置权限** | `sudo chown -R www-data:www-data /var/www/cityu-website && sudo chmod -R 755 /var/www/cityu-website` |
+| **手动运行更新脚本** | `sudo /usr/local/bin/update-website.sh` |
+| **查看定时任务** | `sudo crontab -l` |
+
+
+### **最终效果**
+- Nginx 配置了 **HTTPS** 并支持 **自动跳转 HTTP → HTTPS**。
+- 服务器每天 **凌晨 1 点自动从 Gitee 拉取代码并部署**。
+- 所有更新会自动 **应用权限** 并 **重载 Nginx**。
+
+
+
 ---
 
-### **总结**
-设置完成后，服务器将每天凌晨 1 点：
-1. 从 Gitee 仓库拉取最新代码。
-2. 覆盖到 `/var/www/cityu-website`。
-3. 设置权限并重载 Nginx。
