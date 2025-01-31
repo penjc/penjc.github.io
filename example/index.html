@@ -1,0 +1,511 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="penjc">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Hello World">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Example">
+<meta property="og:url" content="https://penjc.github.io/example/index.html">
+<meta property="og:site_name" content="penjc">
+<meta property="og:description" content="Hello World">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images.unsplash.com/photo-1495106245177-55dc6f43e83f?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+<meta property="article:published_time" content="2024-10-10T02:00:00.000Z">
+<meta property="article:modified_time" content="2024-10-10T02:00:00.000Z">
+<meta property="article:author" content="penjc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1495106245177-55dc6f43e83f?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+  
+  
+  
+  <title>Example - penjc</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"penjc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"JAVA"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>penjc</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/penjc" target="_blank">
+                <i class="iconfont icon-github-fill"></i>
+                <span></span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://images.unsplash.com/photo-1507941097613-9f2157b69235?q=80&w=3043&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Example"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h3 id="Tag"><a href="#Tag" class="headerlink" title="Tag"></a>Tag</h3><div class="note note-success">
+            <p>primary、secondary、success、danger、warning、info、light</p>
+          </div>
+
+<h3 id="折叠块"><a href="#折叠块" class="headerlink" title="折叠块"></a>折叠块</h3>
+    <div class="fold">
+      <div class="fold-title fold-primary collapsed" data-toggle="collapse" href="#collapse-6d36906e" role="button" aria-expanded="false" aria-controls="collapse-6d36906e">
+        <div class="fold-arrow">▶</div>折叠块
+      </div>
+      <div class="fold-collapse collapse" id="collapse-6d36906e">
+        <div class="fold-content">
+          <p>primary、secondary、success、danger、warning、info、light</p>
+        </div>
+      </div>
+    </div>
+
+<h3 id="勾选框"><a href="#勾选框" class="headerlink" title="勾选框"></a>勾选框</h3><div>
+            <input type="checkbox"  checked="checked">勾选
+
+          </div>
+
+<h3 id="跳转按钮"><a href="#跳转按钮" class="headerlink" title="跳转按钮"></a>跳转按钮</h3><a class="btn" href="url"  title="悬停文字" target="_blank">跳转按钮</a>
+
+<h3 id="图片集"><a href="#图片集" class="headerlink" title="图片集"></a>图片集</h3><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.unsplash.com/photo-1494199505258-5f95387f933c?q=80&w=2973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==" srcset="/img/loading.gif" lazyload></div><div class="group-image-wrap"><img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==" srcset="/img/loading.gif" lazyload></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.unsplash.com/photo-1435783099294-283725c37230?q=80&w=3028&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==" srcset="/img/loading.gif" lazyload></div><div class="group-image-wrap"><img src="https://images.unsplash.com/photo-1508201890890-b6dec8b3fb2a?q=80&w=2972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==" srcset="/img/loading.gif" lazyload></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.unsplash.com/photo-1495106245177-55dc6f43e83f?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==" srcset="/img/loading.gif" lazyload></div></div></div>
+
+<h3 id="总定义页面"><a href="#总定义页面" class="headerlink" title="总定义页面"></a>总定义页面</h3><p>1.首先用命令行创建页面：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs maxima">hexo <span class="hljs-built_in">new</span> page <span class="hljs-built_in">example</span><br></code></pre></td></tr></table></figure>
+<p>2.创建成功后编辑博客目录下 &#x2F;source&#x2F;example&#x2F;index.md：</p>
+<h3 id="修改历史提交记录"><a href="#修改历史提交记录" class="headerlink" title="修改历史提交记录"></a>修改历史提交记录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">git filter-branch -f --env-filter <span class="hljs-string">&#x27;</span><br><span class="hljs-string">OLD_EMAIL=&quot;2686728826@qq.com&quot;</span><br><span class="hljs-string">CORRECT_NAME=&quot;PENG&quot;</span><br><span class="hljs-string">CORRECT_EMAIL=&quot;jcpeng3-c@my.cityu.edu.hk&quot;</span><br><span class="hljs-string">if [ &quot;$GIT_COMMITTER_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]</span><br><span class="hljs-string">then</span><br><span class="hljs-string">export GIT_COMMITTER_NAME=&quot;$CORRECT_NAME&quot;</span><br><span class="hljs-string">export GIT_COMMITTER_EMAIL=&quot;$CORRECT_EMAIL&quot;</span><br><span class="hljs-string">fi</span><br><span class="hljs-string">if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]</span><br><span class="hljs-string">then</span><br><span class="hljs-string">export GIT_AUTHOR_NAME=&quot;$CORRECT_NAME&quot;</span><br><span class="hljs-string">export GIT_AUTHOR_EMAIL=&quot;$CORRECT_EMAIL&quot;</span><br><span class="hljs-string">fi</span><br><span class="hljs-string">&#x27;</span> --tag-name-filter <span class="hljs-built_in">cat</span> -- --branches --tags<br></code></pre></td></tr></table></figure>
+<h3 id="常见的提交类型"><a href="#常见的提交类型" class="headerlink" title="常见的提交类型"></a>常见的提交类型</h3><p>在代码提交中，常见的提交类型（如 feature 和 refactor）通常是基于 Conventional Commits 规范的。</p>
+<h4 id="feat-feature"><a href="#feat-feature" class="headerlink" title="feat (feature)"></a>feat (feature)</h4><p>表示新增功能。<br>例如：feat: 添加用户登录功能</p>
+<h4 id="fix"><a href="#fix" class="headerlink" title="fix"></a>fix</h4><p>表示修复 bug。<br>例如：fix: 修复无法保存用户数据的问题</p>
+<h4 id="refactor"><a href="#refactor" class="headerlink" title="refactor"></a>refactor</h4><p>表示代码重构，既不影响功能，也不修复 bug。<br>例如：refactor: 优化查询逻辑以提高性能</p>
+<h4 id="docs"><a href="#docs" class="headerlink" title="docs"></a>docs</h4><p>表示仅修改文档。<br>例如：docs: 更新 README 文件中的安装指南</p>
+<h4 id="style"><a href="#style" class="headerlink" title="style"></a>style</h4><p>表示代码格式化修改，与功能无关（例如空格、缩进、分号等）。<br>例如：style: 调整代码缩进以符合规范</p>
+<h4 id="test"><a href="#test" class="headerlink" title="test"></a>test</h4><p>表示添加或修改测试。<br>例如：test: 添加单元测试用例以覆盖 edge case</p>
+<h4 id="chore"><a href="#chore" class="headerlink" title="chore"></a>chore</h4><p>表示杂项更新，与代码运行逻辑无关（如构建工具配置、CI&#x2F;CD 配置）。<br>例如：chore: 更新 npm 依赖版本</p>
+<h4 id="perf"><a href="#perf" class="headerlink" title="perf"></a>perf</h4><p>表示性能优化。<br>例如：perf: 优化循环处理逻辑以降低时间复杂度</p>
+<h4 id="build"><a href="#build" class="headerlink" title="build"></a>build</h4><p>表示构建系统或外部依赖的修改（如升级 npm 包、修改 Webpack 配置）。<br>例如：build: 升级 Babel 版本到 v7.20</p>
+<h4 id="ci"><a href="#ci" class="headerlink" title="ci"></a>ci</h4><p>表示与持续集成相关的更改。<br>例如：ci: 修改 GitHub Actions 配置以支持多平台测试</p>
+<h4 id="revert"><a href="#revert" class="headerlink" title="revert"></a>revert</h4><p>表示回滚之前的提交。<br>例如：revert: 回滚 “feat: 添加支付功能”</p>
+<h4 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h4><p>表示紧急修复问题（不是官方规范的一部分，但常用）。<br>例如：hotfix: 修复生产环境崩溃问题</p>
+<hr>
+<h1 id="Nginx-配置与网站自动更新总结"><a href="#Nginx-配置与网站自动更新总结" class="headerlink" title="Nginx 配置与网站自动更新总结"></a><strong>Nginx 配置与网站自动更新总结</strong></h1><h2 id="1-Nginx-站点配置文件-etc-nginx-sites-available-cityu-website"><a href="#1-Nginx-站点配置文件-etc-nginx-sites-available-cityu-website" class="headerlink" title="1. Nginx 站点配置文件 /etc/nginx/sites-available/cityu-website"></a><strong>1. Nginx 站点配置文件 <code>/etc/nginx/sites-available/cityu-website</code></strong></h2><h3 id="配置-HTTPS-及自动跳转"><a href="#配置-HTTPS-及自动跳转" class="headerlink" title="配置 HTTPS 及自动跳转"></a><strong>配置 HTTPS 及自动跳转</strong></h3><p>编辑 Nginx 站点配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /etc/nginx/sites-available/cityu-website<br></code></pre></td></tr></table></figure>
+
+<h4 id="配置内容"><a href="#配置内容" class="headerlink" title="配置内容"></a><strong>配置内容</strong></h4><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;<br>    <span class="hljs-attribute">server_name</span> _;<br><br>    <span class="hljs-comment"># HTTP 重定向到 HTTPS</span><br>    <span class="hljs-attribute">return</span> <span class="hljs-number">301</span> https://<span class="hljs-variable">$host</span><span class="hljs-variable">$request_uri</span>;<br>&#125;<br><br><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span> <span class="hljs-number">443</span> ssl;<br>    <span class="hljs-attribute">server_name</span> _;<br><br>    <span class="hljs-attribute">root</span> /var/www/cityu-website;<br>    <span class="hljs-attribute">index</span> index.html;<br><br>    <span class="hljs-comment"># SSL 证书路径</span><br>    <span class="hljs-attribute">ssl_certificate</span> /etc/nginx/ssl/stepforx.com_bundle.crt;<br>    <span class="hljs-attribute">ssl_certificate_key</span> /etc/nginx/ssl/stepforx.com.key;<br><br>    <span class="hljs-attribute">ssl_session_timeout</span> <span class="hljs-number">5m</span>;<br>    <span class="hljs-attribute">ssl_protocols</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>;<br>    <span class="hljs-attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5;<br>    <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-comment"># 网站路径</span><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">alias</span> /var/www/cityu-website/;<br>        <span class="hljs-attribute">index</span> index.html;<br>        <span class="hljs-attribute">try_files</span> <span class="hljs-variable">$uri</span> <span class="hljs-variable">$uri</span>/ /index.html;<br>    &#125;<br><br>    <span class="hljs-comment"># 其他路径</span><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">try_files</span> <span class="hljs-variable">$uri</span> <span class="hljs-variable">$uri</span>/ =<span class="hljs-number">404</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>启用配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">ln</span> -s /etc/nginx/sites-available/cityu-website /etc/nginx/sites-enabled/<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="2-安装-SSL-证书"><a href="#2-安装-SSL-证书" class="headerlink" title="2. 安装 SSL 证书"></a><strong>2. 安装 SSL 证书</strong></h2><ol>
+<li><p><strong>上传 SSL 证书</strong>：</p>
+<ul>
+<li>将 <code>stepforx.com_bundle.crt</code> 和 <code>stepforx.com.key</code> 上传到 <code>/etc/nginx/ssl/</code></li>
+<li>确保目录存在：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mkdir</span> -p /etc/nginx/ssl<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> stepforx.com_bundle.crt stepforx.com.key /etc/nginx/ssl/<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>验证 Nginx 配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nginx -t<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>重启 Nginx</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="3-Nginx-全局配置-etc-nginx-nginx-conf"><a href="#3-Nginx-全局配置-etc-nginx-nginx-conf" class="headerlink" title="3. Nginx 全局配置 /etc/nginx/nginx.conf"></a><strong>3. Nginx 全局配置 <code>/etc/nginx/nginx.conf</code></strong></h2><p>编辑主配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /etc/nginx/nginx.conf<br></code></pre></td></tr></table></figure>
+
+<p><strong>确保包含以下内容</strong>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">user</span> www-data;<br><span class="hljs-attribute">worker_processes</span> auto;<br><span class="hljs-attribute">pid</span> /run/nginx.pid;<br><span class="hljs-attribute">include</span> /etc/nginx/modules-enabled/<span class="hljs-regexp">*.conf</span>;<br><br><span class="hljs-section">events</span> &#123;<br>    <span class="hljs-attribute">worker_connections</span> <span class="hljs-number">768</span>;<br>&#125;<br><br><span class="hljs-section">http</span> &#123;<br>    <span class="hljs-attribute">include</span> /etc/nginx/mime.types;<br>    <span class="hljs-attribute">default_type</span> application/octet-stream;<br><br>    <span class="hljs-attribute">sendfile</span> <span class="hljs-literal">on</span>;<br>    <span class="hljs-attribute">tcp_nopush</span> <span class="hljs-literal">on</span>;<br>    <span class="hljs-attribute">types_hash_max_size</span> <span class="hljs-number">2048</span>;<br><br>    <span class="hljs-attribute">access_log</span> /var/log/nginx/access.log;<br><br>    <span class="hljs-attribute">gzip</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-attribute">ssl_protocols</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>;<br>    <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;<br><br>    <span class="hljs-attribute">include</span> /etc/nginx/sites-enabled/*;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>应用更改</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nginx -t<br><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-更新-build-文件夹"><a href="#4-更新-build-文件夹" class="headerlink" title="4. 更新 build 文件夹"></a><strong>4. 更新 <code>build</code> 文件夹</strong></h2><p>每次更新 <code>build</code> 文件后，需要执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">rm</span> -rf /var/www/cityu-website/*<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cp</span> -r /path/to/new-build/* /var/www/cityu-website/<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chown</span> -R www-data:www-data /var/www/cityu-website<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> -R 755 /var/www/cityu-website<br><span class="hljs-built_in">sudo</span> nginx -t<br><span class="hljs-built_in">sudo</span> systemctl reload nginx<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-自动更新脚本"><a href="#5-自动更新脚本" class="headerlink" title="5. 自动更新脚本"></a><strong>5. 自动更新脚本</strong></h2><p>创建自动更新脚本 <code>/usr/local/bin/update-website.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> nano /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+<p><strong>脚本内容</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br><br>TARGET_DIR=<span class="hljs-string">&quot;/var/www/cityu-website&quot;</span><br>REPO_URL=<span class="hljs-string">&quot;git@gitee.com:penjc/cityu-build.git&quot;</span><br>TEMP_DIR=<span class="hljs-string">&quot;/tmp/cityu-build&quot;</span><br><br><span class="hljs-comment"># 拉取最新代码</span><br><span class="hljs-keyword">if</span> [ -d <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span> ]; <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br><span class="hljs-keyword">fi</span><br><br>git <span class="hljs-built_in">clone</span> <span class="hljs-string">&quot;<span class="hljs-variable">$REPO_URL</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br><br><span class="hljs-comment"># 覆盖目标目录</span><br><span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>/*&quot;</span><br><span class="hljs-built_in">cp</span> -r <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>/&quot;</span>* <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>/&quot;</span><br><br><span class="hljs-comment"># 设置权限</span><br><span class="hljs-built_in">chown</span> -R www-data:www-data <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>&quot;</span><br><span class="hljs-built_in">chmod</span> -R 755 <span class="hljs-string">&quot;<span class="hljs-variable">$TARGET_DIR</span>&quot;</span><br><br><span class="hljs-comment"># 重载 Nginx</span><br>systemctl reload nginx<br><br><span class="hljs-comment"># 清理临时目录</span><br><span class="hljs-built_in">rm</span> -rf <span class="hljs-string">&quot;<span class="hljs-variable">$TEMP_DIR</span>&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>设置可执行权限</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> +x /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="6-定时任务（每天凌晨-1-点自动更新）"><a href="#6-定时任务（每天凌晨-1-点自动更新）" class="headerlink" title="6. 定时任务（每天凌晨 1 点自动更新）"></a><strong>6. 定时任务（每天凌晨 1 点自动更新）</strong></h2><p>使用 <code>crontab</code> 设置定时任务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> crontab -e<br></code></pre></td></tr></table></figure>
+
+<p>添加以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">0 1 * * * /usr/local/bin/update-website.sh &gt;&gt; /var/log/update-website.log 2&gt;&amp;1<br></code></pre></td></tr></table></figure>
+
+<p><strong>测试任务是否生效</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> crontab -l<br></code></pre></td></tr></table></figure>
+
+<p><strong>手动运行测试</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> /usr/local/bin/update-website.sh<br></code></pre></td></tr></table></figure>
+
+<h3 id="7-任务总结"><a href="#7-任务总结" class="headerlink" title="7. 任务总结"></a><strong>7. 任务总结</strong></h3><table>
+<thead>
+<tr>
+<th>任务</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>验证 Nginx 配置</strong></td>
+<td><code>sudo nginx -t</code></td>
+</tr>
+<tr>
+<td><strong>重载 Nginx</strong></td>
+<td><code>sudo systemctl reload nginx</code></td>
+</tr>
+<tr>
+<td><strong>更新 <code>build</code> 文件夹</strong></td>
+<td><code>sudo rm -rf /var/www/cityu-website/* &amp;&amp; sudo cp -r /path/to/new-build/* /var/www/cityu-website/</code></td>
+</tr>
+<tr>
+<td><strong>设置权限</strong></td>
+<td><code>sudo chown -R www-data:www-data /var/www/cityu-website &amp;&amp; sudo chmod -R 755 /var/www/cityu-website</code></td>
+</tr>
+<tr>
+<td><strong>手动运行更新脚本</strong></td>
+<td><code>sudo /usr/local/bin/update-website.sh</code></td>
+</tr>
+<tr>
+<td><strong>查看定时任务</strong></td>
+<td><code>sudo crontab -l</code></td>
+</tr>
+</tbody></table>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a><strong>最终效果</strong></h3><ul>
+<li>Nginx 配置了 <strong>HTTPS</strong> 并支持 <strong>自动跳转 HTTP → HTTPS</strong>。</li>
+<li>服务器每天 <strong>凌晨 1 点自动从 Gitee 拉取代码并部署</strong>。</li>
+<li>所有更新会自动 <strong>应用权限</strong> 并 <strong>重载 Nginx</strong>。</li>
+</ul>
+<hr>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Copyright © 2025 penjc. Powered by <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
