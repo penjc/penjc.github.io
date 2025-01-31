@@ -314,15 +314,78 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/01/02/middleware/redisMq/" target="_self">
-          Redis 作为消息队列
+        <a href="/2025/01/30/archive/redis/lua/" target="_self">
+          Lua脚本在Redis中的应用
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/01/02/middleware/redisMq/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/01/30/archive/redis/lua/" target="_self">
         <div>
-          Redis 作为消息队列的运用和发展Redis 是目前最受欢迎的 KV 类数据库，不仅限于作为 KV 场景使用，其消息队列功能也很重要。本文将解析 Redis 作为消息队列的发展历程，并提供具体代码示例。  一、Redis 1.0 listRedis 在 1.0 版本就提供了 list 结构，通过下列方式，完成消息的生产与消费。 1. 基于 list 的消息生产与消费 生产消息：  12lpush
+          Redis Lua 脚本讲解Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。  1. 基本用法Lua 脚本可以通过 Redis 的 EVAL 或 EVALSHA 命令执行。 语法 1EVAL script numkeys key [key ...] arg [arg ..
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-01-30 00:00" pubdate>
+              2025-01-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">#Redis</a>
+            
+              <a href="/tags/Lua/">#Lua</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/01/02/middleware/redisMq2/" target="_self">
+          Redis 作为消息队列及幂等性处理
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/01/02/middleware/redisMq2/" target="_self">
+        <div>
+          1. Redis Stream 消费者初始化12345678910111213@Component@RequiredArgsConstructorpublic class ShortLinkStatsStreamInitializeTask implements InitializingBean &#123;    private final StringRedisTemplate stringR
         </div>
       </a>
 
@@ -386,15 +449,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/01/02/middleware/redisMq2/" target="_self">
-          Redis 作为消息队列及幂等性处理
+        <a href="/2025/01/02/middleware/redisMq/" target="_self">
+          Redis 作为消息队列
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/01/02/middleware/redisMq2/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/01/02/middleware/redisMq/" target="_self">
         <div>
-          1. Redis Stream 消费者初始化12345678910111213@Component@RequiredArgsConstructorpublic class ShortLinkStatsStreamInitializeTask implements InitializingBean &#123;    private final StringRedisTemplate stringR
+          Redis 作为消息队列的运用和发展Redis 是目前最受欢迎的 KV 类数据库，不仅限于作为 KV 场景使用，其消息队列功能也很重要。本文将解析 Redis 作为消息队列的发展历程，并提供具体代码示例。  一、Redis 1.0 listRedis 在 1.0 版本就提供了 list 结构，通过下列方式，完成消息的生产与消费。 1. 基于 list 的消息生产与消费 生产消息：  12lpush
         </div>
       </a>
 
@@ -645,9 +708,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E6%AD%A5%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">#步隆过滤器</a>
-            
               <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">#中间件</a>
+            
+              <a href="/tags/%E6%AD%A5%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">#步隆过滤器</a>
             
           </div>
         
@@ -849,74 +912,6 @@
               <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">#中间件</a>
             
               <a href="/tags/SpringCloud/">#SpringCloud</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/04/27/java/2023-04-27-springcache/" target="_self">
-          Spring Cache
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/04/27/java/2023-04-27-springcache/" target="_self">
-        <div>
-          1 Spring Cache1.1 概览Spring Cache 是一个框架，实现了基于注解的缓存功能，只需要简单地加一个注解，就能实现缓存功能。 Spring Cache 提供了一层抽象，底层可以切换不同的缓存实现，例如：  EHCache Caffeine Redis(常用)  起步依赖： 1234&lt;dependency&gt;	&lt;groupId&gt;org.springfram
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-04-27 00:00" pubdate>
-              2024-04-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/JAVA/" class="category-chain-item">JAVA</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/JAVA/Spring/" class="category-chain-item">Spring</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Spring-Cache/">#Spring Cache</a>
             
           </div>
         
