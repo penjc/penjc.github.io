@@ -1,0 +1,858 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="penjc">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Redis 主从复制（Master-Slave Replication）详解1. 什么是 Redis 主从复制？Redis 主从复制（Replication） 是一种数据同步机制，允许 从节点（Slave） 复制 主节点（Master） 的数据，以提高系统的可用性、负载均衡能力，并支持高可用架构（如 Sentinel、Cluster）。 1.1 主从复制的核心作用 数据冗余：从节点保存主节点的数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 主从复制">
+<meta property="og:url" content="https://penjc.github.io/2025/01/17/archive/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:site_name" content="penjc">
+<meta property="og:description" content="Redis 主从复制（Master-Slave Replication）详解1. 什么是 Redis 主从复制？Redis 主从复制（Replication） 是一种数据同步机制，允许 从节点（Slave） 复制 主节点（Master） 的数据，以提高系统的可用性、负载均衡能力，并支持高可用架构（如 Sentinel、Cluster）。 1.1 主从复制的核心作用 数据冗余：从节点保存主节点的数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-02-01T03:05:39.932Z">
+<meta property="article:author" content="penjc">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Redis 主从复制 - penjc</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"penjc.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"JAVA"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>penjc</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/penjc" target="_blank">
+                <i class="iconfont icon-github-fill"></i>
+                <span></span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://images.unsplash.com/photo-1507941097613-9f2157b69235?q=80&w=3043&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis 主从复制"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-01-17 00:00" pubdate>
+          2025年1月17日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis 主从复制</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Redis-主从复制（Master-Slave-Replication）详解"><a href="#Redis-主从复制（Master-Slave-Replication）详解" class="headerlink" title="Redis 主从复制（Master-Slave Replication）详解"></a><strong>Redis 主从复制（Master-Slave Replication）详解</strong></h1><h2 id="1-什么是-Redis-主从复制？"><a href="#1-什么是-Redis-主从复制？" class="headerlink" title="1. 什么是 Redis 主从复制？"></a><strong>1. 什么是 Redis 主从复制？</strong></h2><p>Redis <strong>主从复制（Replication）</strong> 是一种数据同步机制，允许 <strong>从节点（Slave）</strong> 复制 <strong>主节点（Master）</strong> 的数据，以提高系统的可用性、负载均衡能力，并支持高可用架构（如 Sentinel、Cluster）。</p>
+<h3 id="1-1-主从复制的核心作用"><a href="#1-1-主从复制的核心作用" class="headerlink" title="1.1 主从复制的核心作用"></a><strong>1.1 主从复制的核心作用</strong></h3><ul>
+<li><strong>数据冗余</strong>：从节点保存主节点的数据，防止数据丢失。</li>
+<li><strong>负载均衡</strong>：读请求可以分摊到多个从节点，提高并发能力。</li>
+<li><strong>故障恢复</strong>：主节点故障时，可快速切换到从节点（结合 Redis Sentinel）。</li>
+<li><strong>高可用架构</strong>：作为 Redis 集群（Redis Cluster）的基础组件。</li>
+</ul>
+<hr>
+<h2 id="2-Redis-主从复制的工作原理"><a href="#2-Redis-主从复制的工作原理" class="headerlink" title="2. Redis 主从复制的工作原理"></a><strong>2. Redis 主从复制的工作原理</strong></h2><p>Redis 的主从复制流程主要包括：</p>
+<ol>
+<li><strong>从节点发送同步请求</strong>（<code>PSYNC</code> 命令）</li>
+<li><strong>主节点创建 RDB 快照</strong> 并发送给从节点（全量同步）</li>
+<li><strong>主节点发送命令流</strong>（增量同步）</li>
+<li><strong>从节点应用数据</strong>，最终达到一致性</li>
+</ol>
+<h3 id="2-1-全量同步（Full-Synchronization）"><a href="#2-1-全量同步（Full-Synchronization）" class="headerlink" title="2.1 全量同步（Full Synchronization）"></a><strong>2.1 全量同步（Full Synchronization）</strong></h3><p>当从节点连接到主节点时，会进行 <strong>全量同步</strong>：</p>
+<ul>
+<li><strong>Step 1</strong>：从节点发送 <code>PSYNC</code> 请求主节点同步数据。</li>
+<li><strong>Step 2</strong>：如果是新加入的从节点，主节点创建 RDB 快照（<code>BGSAVE</code>）。</li>
+<li><strong>Step 3</strong>：主节点将 RDB 快照发送给从节点。</li>
+<li><strong>Step 4</strong>：从节点加载 RDB 文件，并接收主节点发送的写入命令。</li>
+</ul>
+<h3 id="2-2-增量同步（Incremental-Synchronization）"><a href="#2-2-增量同步（Incremental-Synchronization）" class="headerlink" title="2.2 增量同步（Incremental Synchronization）"></a><strong>2.2 增量同步（Incremental Synchronization）</strong></h3><p>当从节点与主节点同步后，主节点会继续将后续的写操作同步到从节点，以保持数据一致。</p>
+<ul>
+<li><strong>Step 1</strong>：主节点会维护一个 <strong>复制积压缓冲区（Replication Backlog Buffer）</strong>，存储最近的写入操作。</li>
+<li><strong>Step 2</strong>：如果主从连接断开并重连，只要缓冲区中的数据还未丢失，从节点可以继续增量同步，避免重新全量同步。</li>
+</ul>
+<h3 id="2-3-断线重连"><a href="#2-3-断线重连" class="headerlink" title="2.3 断线重连"></a><strong>2.3 断线重连</strong></h3><ul>
+<li><strong>如果断开时间短</strong>（缓冲区仍然保留），可以使用 <strong>增量同步</strong>（仅同步最近丢失的数据）。</li>
+<li><strong>如果断开时间长</strong>（缓冲区数据丢失），则需要重新进行 <strong>全量同步</strong>。</li>
+</ul>
+<hr>
+<h2 id="3-Redis-主从复制的配置"><a href="#3-Redis-主从复制的配置" class="headerlink" title="3. Redis 主从复制的配置"></a><strong>3. Redis 主从复制的配置</strong></h2><h3 id="3-1-配置主节点"><a href="#3-1-配置主节点" class="headerlink" title="3.1 配置主节点"></a><strong>3.1 配置主节点</strong></h3><p>主节点默认无需特殊配置，直接启动即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">redis-server /etc/redis/redis.conf<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-配置从节点"><a href="#3-2-配置从节点" class="headerlink" title="3.2 配置从节点"></a><strong>3.2 配置从节点</strong></h3><p>在 <code>redis.conf</code> 配置文件中，添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">replicaof &lt;master-ip&gt; &lt;master-port&gt;<br></code></pre></td></tr></table></figure>
+<p>或在 Redis CLI 运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">SLAVEOF &lt;master-ip&gt; &lt;master-port&gt;<br></code></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">SLAVEOF 192.168.1.100 6379<br></code></pre></td></tr></table></figure>
+<p>从节点会连接到 <strong><code>192.168.1.100:6379</code></strong> 并开始同步数据。</p>
+<hr>
+<h2 id="4-Redis-主从复制的数据流"><a href="#4-Redis-主从复制的数据流" class="headerlink" title="4. Redis 主从复制的数据流"></a><strong>4. Redis 主从复制的数据流</strong></h2><h3 id="4-1-查看主从信息"><a href="#4-1-查看主从信息" class="headerlink" title="4.1 查看主从信息"></a><strong>4.1 查看主从信息</strong></h3><p>在 <strong>主节点</strong> 查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">INFO replication<br></code></pre></td></tr></table></figure>
+<p>示例输出：</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs pf"><span class="hljs-comment"># Replication</span><br>role:master<br>connected_slaves:<span class="hljs-number">1</span><br>slave0:ip=<span class="hljs-number">192.168</span>.<span class="hljs-number">1.101</span>,<span class="hljs-keyword">port</span>=<span class="hljs-number">6379</span>,<span class="hljs-keyword">state</span>=online,offset=<span class="hljs-number">1000</span>,lag=<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<p>在 <strong>从节点</strong> 查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">INFO replication<br></code></pre></td></tr></table></figure>
+<p>示例输出：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-meta"># Replication</span><br><span class="hljs-symbol">role:</span>slave<br><span class="hljs-symbol">master_host:</span><span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.100</span><br><span class="hljs-symbol">master_port:</span><span class="hljs-number">6379</span><br><span class="hljs-symbol">master_link_status:</span>up<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-主从同步过程"><a href="#4-2-主从同步过程" class="headerlink" title="4.2 主从同步过程"></a><strong>4.2 主从同步过程</strong></h3><h4 id="（1）写入数据"><a href="#（1）写入数据" class="headerlink" title="（1）写入数据"></a><strong>（1）写入数据</strong></h4><p>在主节点写入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">SET key1 <span class="hljs-string">&quot;Hello, Redis!&quot;</span><br></code></pre></td></tr></table></figure>
+<p>然后在从节点读取：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">GET key1<br></code></pre></td></tr></table></figure>
+<p>返回：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;Hello, Redis!&quot;</span><br></code></pre></td></tr></table></figure>
+<p>说明数据已同步到从节点。</p>
+<h4 id="（2）断开主从"><a href="#（2）断开主从" class="headerlink" title="（2）断开主从"></a><strong>（2）断开主从</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">SLAVEOF NO ONE<br></code></pre></td></tr></table></figure>
+<p>从节点会变为独立节点，不再同步主节点的数据。</p>
+<h4 id="（3）恢复主从关系"><a href="#（3）恢复主从关系" class="headerlink" title="（3）恢复主从关系"></a><strong>（3）恢复主从关系</strong></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">SLAVEOF 192.168.1.100 6379<br></code></pre></td></tr></table></figure>
+<p>从节点会重新同步主节点的数据。</p>
+<hr>
+<h2 id="5-Redis-复制模式"><a href="#5-Redis-复制模式" class="headerlink" title="5. Redis 复制模式"></a><strong>5. Redis 复制模式</strong></h2><p>Redis 支持两种复制模式：</p>
+<h3 id="5-1-异步复制（默认）"><a href="#5-1-异步复制（默认）" class="headerlink" title="5.1 异步复制（默认）"></a><strong>5.1 异步复制（默认）</strong></h3><ul>
+<li><strong>默认情况下，Redis 采用异步复制</strong>。</li>
+<li>主节点会将写入操作发送给从节点，但不会等待从节点完成复制。</li>
+<li><strong>优点</strong>：性能高，主节点可以继续处理其他请求。</li>
+<li><strong>缺点</strong>：如果主节点故障，部分数据可能尚未同步到从节点，可能会丢失。</li>
+</ul>
+<h3 id="5-2-半同步复制"><a href="#5-2-半同步复制" class="headerlink" title="5.2 半同步复制"></a><strong>5.2 半同步复制</strong></h3><ul>
+<li>在 <strong>Redis 5.0</strong> 及以上，提供了 <strong><code>replica-serve-stale-data</code></strong> 和 <strong><code>replica-read-only</code></strong> 选项：<ul>
+<li><code>replica-serve-stale-data no</code>：从节点在复制未完成时不提供服务。</li>
+<li><code>replica-read-only yes</code>：从节点仅允许读操作，不允许写操作。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="6-Redis-主从复制的应用"><a href="#6-Redis-主从复制的应用" class="headerlink" title="6. Redis 主从复制的应用"></a><strong>6. Redis 主从复制的应用</strong></h2><h3 id="6-1-读写分离"><a href="#6-1-读写分离" class="headerlink" title="6.1 读写分离"></a><strong>6.1 读写分离</strong></h3><ul>
+<li><strong>主节点（Master）处理写请求</strong>。</li>
+<li><strong>从节点（Slave）处理读请求</strong>，减少主节点的负载。</li>
+<li>结合 <strong>负载均衡（Nginx、LVS）</strong> 或 <strong>客户端路由</strong>（如 Redis 读写分离方案）提高性能。</li>
+</ul>
+<h3 id="6-2-备份与高可用"><a href="#6-2-备份与高可用" class="headerlink" title="6.2 备份与高可用"></a><strong>6.2 备份与高可用</strong></h3><ul>
+<li>使用 <strong>从节点进行数据备份</strong>，避免主节点数据丢失。</li>
+<li>配合 <strong>Redis Sentinel</strong> 实现自动故障转移（主节点宕机时，从节点自动提升为主节点）。</li>
+</ul>
+<hr>
+<h2 id="7-Redis-主从复制的缺点"><a href="#7-Redis-主从复制的缺点" class="headerlink" title="7. Redis 主从复制的缺点"></a><strong>7. Redis 主从复制的缺点</strong></h2><h3 id="7-1-数据一致性问题"><a href="#7-1-数据一致性问题" class="headerlink" title="7.1 数据一致性问题"></a><strong>7.1 数据一致性问题</strong></h3><p>由于 Redis <strong>默认是异步复制</strong>，可能导致：</p>
+<ul>
+<li>主节点写入数据后崩溃，而数据尚未同步到从节点，导致数据丢失。</li>
+<li>解决方案：使用 <strong><code>WAIT</code> 命令</strong>，确保数据至少写入一定数量的从节点：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">WAIT 1 1000<br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>1</code>：等待至少 <strong>1</strong> 个从节点确认。</li>
+<li><code>1000</code>：等待 <strong>1000ms</strong> 超时。</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-2-复制延迟"><a href="#7-2-复制延迟" class="headerlink" title="7.2 复制延迟"></a><strong>7.2 复制延迟</strong></h3><ul>
+<li>网络负载或主节点压力过大时，从节点可能会 <strong>滞后主节点数据</strong>。</li>
+<li>解决方案：监控 <code>replication offset</code> 差值，确保复制延迟在可接受范围内。</li>
+</ul>
+<h3 id="7-3-主节点压力"><a href="#7-3-主节点压力" class="headerlink" title="7.3 主节点压力"></a><strong>7.3 主节点压力</strong></h3><ul>
+<li><strong>所有从节点都会向主节点请求数据</strong>，导致主节点负载高。</li>
+<li>解决方案：采用 <strong>链式复制</strong>（<strong>Redis Cluster</strong>）减少主节点负载。</li>
+</ul>
+<hr>
+<h2 id="8-Redis-主从复制-vs-Redis-Cluster"><a href="#8-Redis-主从复制-vs-Redis-Cluster" class="headerlink" title="8. Redis 主从复制 vs. Redis Cluster"></a><strong>8. Redis 主从复制 vs. Redis Cluster</strong></h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>主从复制</th>
+<th>Redis Cluster</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据分片</strong></td>
+<td>❌ 无数据分片</td>
+<td>✅ 支持数据分片</td>
+</tr>
+<tr>
+<td><strong>高可用</strong></td>
+<td>✅ 结合 Sentinel 实现</td>
+<td>✅ 内置高可用</td>
+</tr>
+<tr>
+<td><strong>复制方式</strong></td>
+<td>Master-Slave</td>
+<td>多主多从</td>
+</tr>
+<tr>
+<td><strong>扩展性</strong></td>
+<td>中等，不能水平扩展</td>
+<td>良好，支持数据分片</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><ul>
+<li><strong>Redis 主从复制</strong> 用于 <strong>数据冗余、读写分离、提高可用性</strong>。</li>
+<li><strong>复制流程</strong>：从节点连接主节点 → 主节点快照（RDB） → 发送命令流（增量同步）。</li>
+<li><strong>两种复制模式</strong>：<ul>
+<li><strong>异步复制（默认）</strong>：高性能，但可能丢数据。</li>
+<li><strong>半同步复制</strong>：确保数据一致性，适用于高可靠场景。</li>
+</ul>
+</li>
+<li><strong>结合 Redis Sentinel 或 Redis Cluster 以提高高可用性和扩展性</strong>。</li>
+</ul>
+<p>Redis 主从复制是 <strong>分布式 Redis 架构的基础</strong>，常与 <strong>Sentinel（高可用）和 Cluster（分片）</strong> 结合使用！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis/" class="category-chain-item">Redis</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis/" class="print-no-link">#Redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis 主从复制</div>
+      <div>https://penjc.github.io/2025/01/17/archive/redis/redis主从复制/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>penjc</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年1月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/01/17/java/lock/" title="Java 中的锁机制">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java 中的锁机制</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/16/archive/redis/lua/" title="Lua脚本在Redis中的应用">
+                        <span class="hidden-mobile">Lua脚本在Redis中的应用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"3yOxzSlbiihJbVhqgryxzKsF-gzGzoHsz","appKey":"aVdXHOGjbCGgDyrNrbazROse","path":"window.location.pathname","placeholder":"欢迎留言","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":true,"recordIP":true,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Copyright © 2025 penjc. Powered by <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
