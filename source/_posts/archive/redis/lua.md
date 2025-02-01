@@ -8,183 +8,212 @@ tags:
 categories:
   - [Redis]
 ---
+## **Lua 语言详解**
+Lua 是一种轻量级的脚本语言，常用于嵌入式开发，如游戏开发、数据库（如 Redis）、Nginx 以及嵌入式系统。它具有简洁的语法、快速执行速度和较低的资源消耗。
 
-## Redis Lua 脚本
+### **1. Lua 语言基础**
+#### **（1）变量**
+Lua 是动态类型语言，变量的类型在运行时确定。
 
-Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。
-
----
-
-### 1. **基本用法**
-Lua 脚本可以通过 Redis 的 `EVAL` 或 `EVALSHA` 命令执行。
-
-**语法**
-```shell
-EVAL script numkeys key [key ...] arg [arg ...]
+```lua
+-- 变量赋值
+local x = 10
+local y = "Hello, Lua!"
+local z = true
 ```
 
-- `script`：要执行的 Lua 脚本
-- `numkeys`：脚本要操作的键的数量
-- `key [key ...]`：提供给 Lua 脚本的 Redis 键
-- `arg [arg ...]`：传递的额外参数
+#### **（2）数据类型**
+Lua 主要有以下几种数据类型：
+- `nil`：空值
+- `boolean`：布尔类型（`true`/`false`）
+- `number`：数值类型（整数和浮点数）
+- `string`：字符串
+- `table`：表（类似于 Python 的字典）
+- `function`：函数
+
+```lua
+local a = nil
+local b = true
+local c = 3.14
+local d = "Lua"
+local e = { key1 = "value1", key2 = "value2" }
+```
+
+#### **（3）运算符**
+```lua
+-- 算术运算
+local sum = 5 + 3    -- 加法
+local sub = 10 - 4   -- 减法
+local mul = 2 * 3    -- 乘法
+local div = 10 / 2   -- 除法
+local mod = 10 % 3   -- 取模
+local exp = 2 ^ 3    -- 幂运算
+
+-- 关系运算
+local isEqual = (5 == 5)      -- true
+local isNotEqual = (5 ~= 3)   -- true
+local isGreater = (10 > 5)    -- true
+```
+
+#### **（4）控制结构**
+##### **条件判断**
+```lua
+local age = 18
+if age >= 18 then
+    print("Adult")
+elseif age >= 13 then
+    print("Teenager")
+else
+    print("Child")
+end
+```
+
+##### **循环**
+```lua
+-- for 循环
+for i = 1, 5 do
+    print(i)
+end
+
+-- while 循环
+local i = 1
+while i <= 5 do
+    print(i)
+    i = i + 1
+end
+
+-- repeat until 循环
+local j = 1
+repeat
+    print(j)
+    j = j + 1
+until j > 5
+```
+
+#### **（5）函数**
+```lua
+function add(a, b)
+    return a + b
+end
+print(add(5, 3))
+```
+
+#### **（6）Table（类似字典/数组）**
+```lua
+local t = { name = "Alice", age = 25 }
+print(t.name)   -- 访问表中的值
+
+t["gender"] = "female" -- 添加新键值对
+print(t.gender)
+```
 
 ---
 
-### 2. **示例**
-**（1）简单的 Lua 脚本**
+## **Lua 在 Redis 中的应用**
+Redis 允许用户在服务器端执行 Lua 脚本，这样可以实现高效的事务和批处理操作。Redis 使用 `EVAL` 命令执行 Lua 脚本，使得多个命令在一个事务中完成，避免网络往返和数据竞争。
+
+### **1. 在 Redis 中使用 Lua**
+**（1）基本执行**
 ```lua
 EVAL "return 'Hello, Redis!'" 0
 ```
-- 这里 `0` 表示没有传递键，直接返回 `'Hello, Redis!'`。
+- `EVAL` 运行 Lua 脚本
+- `"return 'Hello, Redis!'"` 代表返回一个字符串
+- `0` 表示不需要使用 Redis 键
 
-**（2）操作 Redis 键**
+**（2）读取 Redis 键**
 ```lua
 EVAL "return redis.call('GET', KEYS[1])" 1 mykey
 ```
-- 读取键 `mykey` 的值，相当于 `GET mykey`。
+- `redis.call('GET', KEYS[1])` 相当于 `GET mykey`
+- `1 mykey` 代表传入一个键 `mykey`
 
-**（3）修改键值**
+**（3）写入 Redis**
 ```lua
 EVAL "redis.call('SET', KEYS[1], ARGV[1])" 1 mykey "hello"
 ```
-- 设置 `mykey` 的值为 `"hello"`，相当于 `SET mykey hello`。
+- `redis.call('SET', KEYS[1], ARGV[1])` 相当于 `SET mykey hello`
+- `ARGV[1]` 代表传入的参数 `"hello"`
 
 ---
 
-### 3. **Lua 脚本中的 `redis.call` 和 `redis.pcall`**
-Redis 提供了两个函数来执行命令：
-- `redis.call(command, arg1, arg2, ...)`：
-    - **普通调用**，如果命令失败会报错并终止执行。
-- `redis.pcall(command, arg1, arg2, ...)`：
-    - **安全调用**，如果命令失败不会终止，而是返回错误信息。
+### **2. Redis Lua 事务**
+Lua 在 Redis 中 **是原子执行的**，这意味着整个脚本会在执行时被锁定，直到完成执行后才会释放。
 
-```lua
--- redis.call 失败时会抛出异常
-EVAL "return redis.call('GET', 'nonexistent_key')" 0 
-
--- redis.pcall 失败时不会抛出异常，而是返回错误信息
-EVAL "return redis.pcall('GET', 'nonexistent_key')" 0 
-```
-
----
-
-### 4. **Lua 变量与 Redis 交互**
-```lua
-EVAL "local value = redis.call('GET', KEYS[1]); return value" 1 mykey
-```
-- 先从 `mykey` 读取值赋给 `value` 变量，再返回 `value`。
-
-```lua
-EVAL "redis.call('SET', KEYS[1], ARGV[1]); return 'OK'" 1 mykey "new_value"
-```
-- 设置 `mykey` 为 `new_value`，并返回 `OK`。
-
----
-
-### 5. **Lua 脚本实现原子操作**
-Redis 的 Lua 脚本是 **单线程执行的**，不会被其他命令打断。因此，它可以保证多个 Redis 操作的 **原子性**。
-
-#### **（1）实现计数器**
+#### **（1）Redis 计数器**
 ```lua
 EVAL "return redis.call('INCR', KEYS[1])" 1 counter
 ```
-- 计数器 `counter` 自增，相当于 `INCR counter`。
+- `INCR` 命令对 `counter` 键进行自增。
 
-#### **（2）模拟事务**
-假设我们要实现转账逻辑：
-- 从账户 A 扣 100
-- 给账户 B 加 100
-- 确保 A 余额足够
+#### **（2）Redis 分布式锁**
+**获取锁**
+```lua
+EVAL "return redis.call('SET', KEYS[1], ARGV[1], 'NX', 'EX', ARGV[2])" 1 mylock "token123" 30
+```
+- `SET mylock "token123" NX EX 30`，表示：
+   - `NX`：如果 `mylock` 不存在才设置
+   - `EX`：设置过期时间 30 秒
 
+**释放锁**
 ```lua
 EVAL "
-    local balance = redis.call('GET', KEYS[1])
-    if tonumber(balance) < tonumber(ARGV[1]) then
-        return 'Insufficient funds'
-    end
-    redis.call('DECRBY', KEYS[1], ARGV[1])
-    redis.call('INCRBY', KEYS[2], ARGV[1])
-    return 'Transfer complete'
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+else
+    return 0
+end
+" 1 mylock "token123"
+```
+- 先检查 `mylock` 是否是 `"token123"`，如果是则删除锁，否则返回 `0`。
+
+---
+
+### **3. 限流（Rate Limiting）**
+**实现 API 访问限流，每个用户每分钟最多请求 10 次**
+```lua
+EVAL "
+local current = redis.call('INCR', KEYS[1])
+if current == 1 then
+    redis.call('EXPIRE', KEYS[1], ARGV[1])
+end
+if current > tonumber(ARGV[2]) then
+    return 0
+end
+return 1
+" 1 user:1234:rate_limit 60 10
+```
+- `INCR` 递增请求次数
+- `EXPIRE` 设置 60 秒过期
+- `ARGV[2] = 10` 表示每分钟最多允许 10 次请求
+- 如果超过 10 次，返回 `0`，否则返回 `1`
+
+---
+
+### **4. Redis Lua 实现转账**
+**用户 A 给用户 B 转账**
+```lua
+EVAL "
+local balance = redis.call('GET', KEYS[1])
+if tonumber(balance) < tonumber(ARGV[1]) then
+    return 'Insufficient funds'
+end
+redis.call('DECRBY', KEYS[1], ARGV[1])
+redis.call('INCRBY', KEYS[2], ARGV[1])
+return 'Transfer complete'
 " 2 userA userB 100
 ```
-- 读取 `userA` 的余额，如果不足则返回 `"Insufficient funds"`。
-- 如果余额足够，从 `userA` 扣款，并增加 `userB` 余额。
-- 这保证了整个转账过程的原子性，不会发生中途数据不一致的问题。
+- 检查 `userA` 余额是否足够
+- 如果足够，扣除 `100`，然后给 `userB` 增加 `100`
 
 ---
 
-### 6. **EVALSHA 提高效率**
-每次使用 `EVAL` 直接执行脚本，Redis 都需要解析和编译 Lua 代码，这会消耗性能。
-
-Redis 允许将脚本缓存后 **用 SHA1 哈希值执行**：
-1. **缓存脚本**
-   ```shell
-   SCRIPT LOAD "return redis.call('GET', KEYS[1])"
-   ```
-   Redis 返回一个 SHA1 哈希，例如：
-   ```
-   "sha1_hash_value"
-   ```
-2. **用 SHA1 运行脚本**
-   ```shell
-   EVALSHA "sha1_hash_value" 1 mykey
-   ```
-   这样可以提高执行速度，因为 Redis 不需要每次解析 Lua 代码。
-
----
-
-### 7. **Lua 脚本的限制**
-1. **不能执行 `TIME`, `MONITOR`, `SUBSCRIBE` 等命令**，因为它们依赖外部状态。
-2. **执行时间不可过长**，否则会阻塞 Redis，影响性能。
-3. **不能直接调用 `sleep`**，Redis 不能在 Lua 脚本里阻塞。
-
----
-
-### 8. **应用场景**
-1. **缓存一致性控制**
-    - 例如，批量删除多个键，避免数据残留：
-      ```lua
-      EVAL "redis.call('DEL', KEYS[1], KEYS[2])" 2 key1 key2
-      ```
-2. **限流（Rate Limiting）**
-    - 通过 Lua 实现限流，防止接口被刷：
-      ```lua
-      EVAL "
-          local current = redis.call('INCR', KEYS[1])
-          if current == 1 then
-              redis.call('EXPIRE', KEYS[1], ARGV[1])
-          end
-          if current > tonumber(ARGV[2]) then
-              return 0
-          end
-          return 1
-      " 1 user:1234:rate_limit 60 10
-      ```
-    - 这里 `user:1234:rate_limit` 记录用户请求数
-    - `ARGV[1] = 60` 表示 60 秒过期
-    - `ARGV[2] = 10` 表示 10 次请求限制
-
-3. **分布式锁**
-    - 获取锁：
-      ```lua
-      EVAL "return redis.call('SET', KEYS[1], ARGV[1], 'NX', 'EX', ARGV[2])" 1 mylock "1234" 30
-      ```
-    - 释放锁：
-      ```lua
-      EVAL "
-          if redis.call('GET', KEYS[1]) == ARGV[1] then
-              return redis.call('DEL', KEYS[1])
-          else
-              return 0
-          end
-      " 1 mylock "1234"
-      ```
-
----
-
-## 总结
-- `EVAL` 运行 Lua 脚本，可以操作 Redis 键值。
-- `redis.call()` 执行 Redis 命令，`redis.pcall()` 允许错误恢复。
-- Lua 脚本 **原子执行**，避免竞争条件，提高性能。
-- `EVALSHA` 允许用 SHA1 执行缓存脚本，提高效率。
-- 适用于 **事务控制、限流、分布式锁、批量操作** 等场景。
+## **总结**
+- **Lua 语法简单**，包括变量、控制结构、函数、表等基本功能。
+- **Redis Lua 脚本** 通过 `EVAL` 执行，并支持 `redis.call()` 来调用 Redis 命令。
+- **Redis Lua 原子性** 确保整个脚本执行过程中数据不会被并发修改。
+- **Redis Lua 应用场景**：
+   1. **计数器**（如用户访问计数）
+   2. **限流**（限制 API 访问频率）
+   3. **分布式锁**（保证数据一致性）
+   4. **转账系统**（事务性操作）
