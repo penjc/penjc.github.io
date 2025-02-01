@@ -9,7 +9,7 @@ categories:
   - [Redis]
 ---
 
-## Redis Lua 脚本讲解
+## Redis Lua 脚本
 
 Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。
 
