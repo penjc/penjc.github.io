@@ -1,5 +1,5 @@
 ---
-title: Redis
+title: Redis 基础
 comment: true   # true/false对应开启/关闭本文章评论
 date: 2024-04-03
 tags:

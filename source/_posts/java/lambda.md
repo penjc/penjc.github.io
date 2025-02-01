@@ -1,6 +1,7 @@
 ---
 title: 函数式接口
 comment: true
+date: 2025-01-15
 tags:
   - JAVA
   - Lambda

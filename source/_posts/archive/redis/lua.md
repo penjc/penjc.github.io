@@ -1,7 +1,7 @@
 ---
 title: Lua脚本在Redis中的应用
 comment: true   # true/false对应开启/关闭本文章评论
-date: 2025-01-30
+date: 2025-01-16
 tags:
   - Redis
   - Lua
