@@ -19,15 +19,15 @@
   <meta name="author" content="penjc">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Redis Lua 脚本讲解Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。  1. 基本用法Lua 脚本可以通过 Redis 的 EVAL 或 EVALSHA 命令执行。 语法 1EVAL script numkeys key [key ...] arg [arg ..">
+    <meta name="description" content="Lua 语言详解Lua 是一种轻量级的脚本语言，常用于嵌入式开发，如游戏开发、数据库（如 Redis）、Nginx 以及嵌入式系统。它具有简洁的语法、快速执行速度和较低的资源消耗。 1. Lua 语言基础（1）变量Lua 是动态类型语言，变量的类型在运行时确定。 1234-- 变量赋值local x &#x3D; 10local y &#x3D; &quot;Hello, Lua!&quot;local z &#x3D; tr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lua脚本在Redis中的应用">
 <meta property="og:url" content="https://penjc.github.io/2025/01/30/archive/redis/lua/index.html">
 <meta property="og:site_name" content="penjc">
-<meta property="og:description" content="Redis Lua 脚本讲解Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。  1. 基本用法Lua 脚本可以通过 Redis 的 EVAL 或 EVALSHA 命令执行。 语法 1EVAL script numkeys key [key ...] arg [arg ..">
+<meta property="og:description" content="Lua 语言详解Lua 是一种轻量级的脚本语言，常用于嵌入式开发，如游戏开发、数据库（如 Redis）、Nginx 以及嵌入式系统。它具有简洁的语法、快速执行速度和较低的资源消耗。 1. Lua 语言基础（1）变量Lua 是动态类型语言，变量的类型在运行时确定。 1234-- 变量赋值local x &#x3D; 10local y &#x3D; &quot;Hello, Lua!&quot;local z &#x3D; tr">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-29T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-01-31T13:57:44.142Z">
+<meta property="article:modified_time" content="2025-02-01T02:43:01.519Z">
 <meta property="article:author" content="penjc">
 <meta property="article:tag" content="Redis">
 <meta property="article:tag" content="Lua">
@@ -248,7 +248,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          980 字
         
       </span>
     
@@ -301,119 +301,100 @@
             
               <div class="markdown-body">
                 
-                <h2 id="Redis-Lua-脚本讲解"><a href="#Redis-Lua-脚本讲解" class="headerlink" title="Redis Lua 脚本讲解"></a>Redis Lua 脚本讲解</h2><p>Redis 支持在服务器端运行 Lua 脚本，这使得可以原子地执行多个命令，避免数据竞争，提高性能。Lua 脚本在 Redis 中通常用于事务、批量操作、缓存一致性控制等场景。</p>
-<hr>
-<h3 id="1-基本用法"><a href="#1-基本用法" class="headerlink" title="1. 基本用法"></a>1. <strong>基本用法</strong></h3><p>Lua 脚本可以通过 Redis 的 <code>EVAL</code> 或 <code>EVALSHA</code> 命令执行。</p>
-<p><strong>语法</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">EVAL script numkeys key [key ...] arg [arg ...]<br></code></pre></td></tr></table></figure>
+                <h2 id="Lua-语言详解"><a href="#Lua-语言详解" class="headerlink" title="Lua 语言详解"></a><strong>Lua 语言详解</strong></h2><p>Lua 是一种轻量级的脚本语言，常用于嵌入式开发，如游戏开发、数据库（如 Redis）、Nginx 以及嵌入式系统。它具有简洁的语法、快速执行速度和较低的资源消耗。</p>
+<h3 id="1-Lua-语言基础"><a href="#1-Lua-语言基础" class="headerlink" title="1. Lua 语言基础"></a><strong>1. Lua 语言基础</strong></h3><h4 id="（1）变量"><a href="#（1）变量" class="headerlink" title="（1）变量"></a><strong>（1）变量</strong></h4><p>Lua 是动态类型语言，变量的类型在运行时确定。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-comment">-- 变量赋值</span><br><span class="hljs-keyword">local</span> x = <span class="hljs-number">10</span><br><span class="hljs-keyword">local</span> y = <span class="hljs-string">&quot;Hello, Lua!&quot;</span><br><span class="hljs-keyword">local</span> z = <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
 
+<h4 id="（2）数据类型"><a href="#（2）数据类型" class="headerlink" title="（2）数据类型"></a><strong>（2）数据类型</strong></h4><p>Lua 主要有以下几种数据类型：</p>
 <ul>
-<li><code>script</code>：要执行的 Lua 脚本</li>
-<li><code>numkeys</code>：脚本要操作的键的数量</li>
-<li><code>key [key ...]</code>：提供给 Lua 脚本的 Redis 键</li>
-<li><code>arg [arg ...]</code>：传递的额外参数</li>
+<li><code>nil</code>：空值</li>
+<li><code>boolean</code>：布尔类型（<code>true</code>&#x2F;<code>false</code>）</li>
+<li><code>number</code>：数值类型（整数和浮点数）</li>
+<li><code>string</code>：字符串</li>
+<li><code>table</code>：表（类似于 Python 的字典）</li>
+<li><code>function</code>：函数</li>
 </ul>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> a = <span class="hljs-literal">nil</span><br><span class="hljs-keyword">local</span> b = <span class="hljs-literal">true</span><br><span class="hljs-keyword">local</span> c = <span class="hljs-number">3.14</span><br><span class="hljs-keyword">local</span> d = <span class="hljs-string">&quot;Lua&quot;</span><br><span class="hljs-keyword">local</span> e = &#123; key1 = <span class="hljs-string">&quot;value1&quot;</span>, key2 = <span class="hljs-string">&quot;value2&quot;</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="（3）运算符"><a href="#（3）运算符" class="headerlink" title="（3）运算符"></a><strong>（3）运算符</strong></h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-comment">-- 算术运算</span><br><span class="hljs-keyword">local</span> sum = <span class="hljs-number">5</span> + <span class="hljs-number">3</span>    <span class="hljs-comment">-- 加法</span><br><span class="hljs-keyword">local</span> <span class="hljs-built_in">sub</span> = <span class="hljs-number">10</span> - <span class="hljs-number">4</span>   <span class="hljs-comment">-- 减法</span><br><span class="hljs-keyword">local</span> mul = <span class="hljs-number">2</span> * <span class="hljs-number">3</span>    <span class="hljs-comment">-- 乘法</span><br><span class="hljs-keyword">local</span> div = <span class="hljs-number">10</span> / <span class="hljs-number">2</span>   <span class="hljs-comment">-- 除法</span><br><span class="hljs-keyword">local</span> <span class="hljs-built_in">mod</span> = <span class="hljs-number">10</span> % <span class="hljs-number">3</span>   <span class="hljs-comment">-- 取模</span><br><span class="hljs-keyword">local</span> <span class="hljs-built_in">exp</span> = <span class="hljs-number">2</span> ^ <span class="hljs-number">3</span>    <span class="hljs-comment">-- 幂运算</span><br><br><span class="hljs-comment">-- 关系运算</span><br><span class="hljs-keyword">local</span> isEqual = (<span class="hljs-number">5</span> == <span class="hljs-number">5</span>)      <span class="hljs-comment">-- true</span><br><span class="hljs-keyword">local</span> isNotEqual = (<span class="hljs-number">5</span> ~= <span class="hljs-number">3</span>)   <span class="hljs-comment">-- true</span><br><span class="hljs-keyword">local</span> isGreater = (<span class="hljs-number">10</span> &gt; <span class="hljs-number">5</span>)    <span class="hljs-comment">-- true</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="（4）控制结构"><a href="#（4）控制结构" class="headerlink" title="（4）控制结构"></a><strong>（4）控制结构</strong></h4><h5 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a><strong>条件判断</strong></h5><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> age = <span class="hljs-number">18</span><br><span class="hljs-keyword">if</span> age &gt;= <span class="hljs-number">18</span> <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Adult&quot;</span>)<br><span class="hljs-keyword">elseif</span> age &gt;= <span class="hljs-number">13</span> <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Teenager&quot;</span>)<br><span class="hljs-keyword">else</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Child&quot;</span>)<br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="循环"><a href="#循环" class="headerlink" title="循环"></a><strong>循环</strong></h5><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-comment">-- for 循环</span><br><span class="hljs-keyword">for</span> i = <span class="hljs-number">1</span>, <span class="hljs-number">5</span> <span class="hljs-keyword">do</span><br>    <span class="hljs-built_in">print</span>(i)<br><span class="hljs-keyword">end</span><br><br><span class="hljs-comment">-- while 循环</span><br><span class="hljs-keyword">local</span> i = <span class="hljs-number">1</span><br><span class="hljs-keyword">while</span> i &lt;= <span class="hljs-number">5</span> <span class="hljs-keyword">do</span><br>    <span class="hljs-built_in">print</span>(i)<br>    i = i + <span class="hljs-number">1</span><br><span class="hljs-keyword">end</span><br><br><span class="hljs-comment">-- repeat until 循环</span><br><span class="hljs-keyword">local</span> j = <span class="hljs-number">1</span><br><span class="hljs-keyword">repeat</span><br>    <span class="hljs-built_in">print</span>(j)<br>    j = j + <span class="hljs-number">1</span><br><span class="hljs-keyword">until</span> j &gt; <span class="hljs-number">5</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="（5）函数"><a href="#（5）函数" class="headerlink" title="（5）函数"></a><strong>（5）函数</strong></h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span><span class="hljs-params">(a, b)</span></span><br>    <span class="hljs-keyword">return</span> a + b<br><span class="hljs-keyword">end</span><br><span class="hljs-built_in">print</span>(add(<span class="hljs-number">5</span>, <span class="hljs-number">3</span>))<br></code></pre></td></tr></table></figure>
+
+<h4 id="（6）Table（类似字典-数组）"><a href="#（6）Table（类似字典-数组）" class="headerlink" title="（6）Table（类似字典&#x2F;数组）"></a><strong>（6）Table（类似字典&#x2F;数组）</strong></h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> t = &#123; name = <span class="hljs-string">&quot;Alice&quot;</span>, age = <span class="hljs-number">25</span> &#125;<br><span class="hljs-built_in">print</span>(t.name)   <span class="hljs-comment">-- 访问表中的值</span><br><br>t[<span class="hljs-string">&quot;gender&quot;</span>] = <span class="hljs-string">&quot;female&quot;</span> <span class="hljs-comment">-- 添加新键值对</span><br><span class="hljs-built_in">print</span>(t.gender)<br></code></pre></td></tr></table></figure>
+
 <hr>
-<h3 id="2-示例"><a href="#2-示例" class="headerlink" title="2. 示例"></a>2. <strong>示例</strong></h3><p><strong>（1）简单的 Lua 脚本</strong></p>
+<h2 id="Lua-在-Redis-中的应用"><a href="#Lua-在-Redis-中的应用" class="headerlink" title="Lua 在 Redis 中的应用"></a><strong>Lua 在 Redis 中的应用</strong></h2><p>Redis 允许用户在服务器端执行 Lua 脚本，这样可以实现高效的事务和批处理操作。Redis 使用 <code>EVAL</code> 命令执行 Lua 脚本，使得多个命令在一个事务中完成，避免网络往返和数据竞争。</p>
+<h3 id="1-在-Redis-中使用-Lua"><a href="#1-在-Redis-中使用-Lua" class="headerlink" title="1. 在 Redis 中使用 Lua"></a><strong>1. 在 Redis 中使用 Lua</strong></h3><p><strong>（1）基本执行</strong></p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return &#x27;Hello, Redis!&#x27;&quot;</span> <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
 <ul>
-<li>这里 <code>0</code> 表示没有传递键，直接返回 <code>&#39;Hello, Redis!&#39;</code>。</li>
+<li><code>EVAL</code> 运行 Lua 脚本</li>
+<li><code>&quot;return &#39;Hello, Redis!&#39;&quot;</code> 代表返回一个字符串</li>
+<li><code>0</code> 表示不需要使用 Redis 键</li>
 </ul>
-<p><strong>（2）操作 Redis 键</strong></p>
+<p><strong>（2）读取 Redis 键</strong></p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return redis.call(&#x27;GET&#x27;, KEYS[1])&quot;</span> <span class="hljs-number">1</span> mykey<br></code></pre></td></tr></table></figure>
 <ul>
-<li>读取键 <code>mykey</code> 的值，相当于 <code>GET mykey</code>。</li>
+<li><code>redis.call(&#39;GET&#39;, KEYS[1])</code> 相当于 <code>GET mykey</code></li>
+<li><code>1 mykey</code> 代表传入一个键 <code>mykey</code></li>
 </ul>
-<p><strong>（3）修改键值</strong></p>
+<p><strong>（3）写入 Redis</strong></p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;redis.call(&#x27;SET&#x27;, KEYS[1], ARGV[1])&quot;</span> <span class="hljs-number">1</span> mykey <span class="hljs-string">&quot;hello&quot;</span><br></code></pre></td></tr></table></figure>
 <ul>
-<li>设置 <code>mykey</code> 的值为 <code>&quot;hello&quot;</code>，相当于 <code>SET mykey hello</code>。</li>
+<li><code>redis.call(&#39;SET&#39;, KEYS[1], ARGV[1])</code> 相当于 <code>SET mykey hello</code></li>
+<li><code>ARGV[1]</code> 代表传入的参数 <code>&quot;hello&quot;</code></li>
 </ul>
 <hr>
-<h3 id="3-Lua-脚本中的-redis-call-和-redis-pcall"><a href="#3-Lua-脚本中的-redis-call-和-redis-pcall" class="headerlink" title="3. Lua 脚本中的 redis.call 和 redis.pcall"></a>3. <strong>Lua 脚本中的 <code>redis.call</code> 和 <code>redis.pcall</code></strong></h3><p>Redis 提供了两个函数来执行命令：</p>
+<h3 id="2-Redis-Lua-事务"><a href="#2-Redis-Lua-事务" class="headerlink" title="2. Redis Lua 事务"></a><strong>2. Redis Lua 事务</strong></h3><p>Lua 在 Redis 中 <strong>是原子执行的</strong>，这意味着整个脚本会在执行时被锁定，直到完成执行后才会释放。</p>
+<h4 id="（1）Redis-计数器"><a href="#（1）Redis-计数器" class="headerlink" title="（1）Redis 计数器"></a><strong>（1）Redis 计数器</strong></h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return redis.call(&#x27;INCR&#x27;, KEYS[1])&quot;</span> <span class="hljs-number">1</span> counter<br></code></pre></td></tr></table></figure>
 <ul>
-<li><code>redis.call(command, arg1, arg2, ...)</code>：<ul>
-<li><strong>普通调用</strong>，如果命令失败会报错并终止执行。</li>
+<li><code>INCR</code> 命令对 <code>counter</code> 键进行自增。</li>
+</ul>
+<h4 id="（2）Redis-分布式锁"><a href="#（2）Redis-分布式锁" class="headerlink" title="（2）Redis 分布式锁"></a><strong>（2）Redis 分布式锁</strong></h4><p><strong>获取锁</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return redis.call(&#x27;SET&#x27;, KEYS[1], ARGV[1], &#x27;NX&#x27;, &#x27;EX&#x27;, ARGV[2])&quot;</span> <span class="hljs-number">1</span> mylock <span class="hljs-string">&quot;token123&quot;</span> <span class="hljs-number">30</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>SET mylock &quot;token123&quot; NX EX 30</code>，表示：<ul>
+<li><code>NX</code>：如果 <code>mylock</code> 不存在才设置</li>
+<li><code>EX</code>：设置过期时间 30 秒</li>
 </ul>
 </li>
-<li><code>redis.pcall(command, arg1, arg2, ...)</code>：<ul>
-<li><strong>安全调用</strong>，如果命令失败不会终止，而是返回错误信息。</li>
 </ul>
-</li>
-</ul>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-comment">-- redis.call 失败时会抛出异常</span><br>EVAL <span class="hljs-string">&quot;return redis.call(&#x27;GET&#x27;, &#x27;nonexistent_key&#x27;)&quot;</span> <span class="hljs-number">0</span> <br><br><span class="hljs-comment">-- redis.pcall 失败时不会抛出异常，而是返回错误信息</span><br>EVAL <span class="hljs-string">&quot;return redis.pcall(&#x27;GET&#x27;, &#x27;nonexistent_key&#x27;)&quot;</span> <span class="hljs-number">0</span> <br></code></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="4-Lua-变量与-Redis-交互"><a href="#4-Lua-变量与-Redis-交互" class="headerlink" title="4. Lua 变量与 Redis 交互"></a>4. <strong>Lua 变量与 Redis 交互</strong></h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;local value = redis.call(&#x27;GET&#x27;, KEYS[1]); return value&quot;</span> <span class="hljs-number">1</span> mykey<br></code></pre></td></tr></table></figure>
+<p><strong>释放锁</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">if redis.call(&#x27;GET&#x27;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">    return redis.call(&#x27;DEL&#x27;, KEYS[1])</span><br><span class="hljs-string">else</span><br><span class="hljs-string">    return 0</span><br><span class="hljs-string">end</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">1</span> mylock <span class="hljs-string">&quot;token123&quot;</span><br></code></pre></td></tr></table></figure>
 <ul>
-<li>先从 <code>mykey</code> 读取值赋给 <code>value</code> 变量，再返回 <code>value</code>。</li>
-</ul>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;redis.call(&#x27;SET&#x27;, KEYS[1], ARGV[1]); return &#x27;OK&#x27;&quot;</span> <span class="hljs-number">1</span> mykey <span class="hljs-string">&quot;new_value&quot;</span><br></code></pre></td></tr></table></figure>
-<ul>
-<li>设置 <code>mykey</code> 为 <code>new_value</code>，并返回 <code>OK</code>。</li>
+<li>先检查 <code>mylock</code> 是否是 <code>&quot;token123&quot;</code>，如果是则删除锁，否则返回 <code>0</code>。</li>
 </ul>
 <hr>
-<h3 id="5-Lua-脚本实现原子操作"><a href="#5-Lua-脚本实现原子操作" class="headerlink" title="5. Lua 脚本实现原子操作"></a>5. <strong>Lua 脚本实现原子操作</strong></h3><p>Redis 的 Lua 脚本是 <strong>单线程执行的</strong>，不会被其他命令打断。因此，它可以保证多个 Redis 操作的 <strong>原子性</strong>。</p>
-<h4 id="（1）实现计数器"><a href="#（1）实现计数器" class="headerlink" title="（1）实现计数器"></a><strong>（1）实现计数器</strong></h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return redis.call(&#x27;INCR&#x27;, KEYS[1])&quot;</span> <span class="hljs-number">1</span> counter<br></code></pre></td></tr></table></figure>
+<h3 id="3-限流（Rate-Limiting）"><a href="#3-限流（Rate-Limiting）" class="headerlink" title="3. 限流（Rate Limiting）"></a><strong>3. 限流（Rate Limiting）</strong></h3><p><strong>实现 API 访问限流，每个用户每分钟最多请求 10 次</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">local current = redis.call(&#x27;INCR&#x27;, KEYS[1])</span><br><span class="hljs-string">if current == 1 then</span><br><span class="hljs-string">    redis.call(&#x27;EXPIRE&#x27;, KEYS[1], ARGV[1])</span><br><span class="hljs-string">end</span><br><span class="hljs-string">if current &gt; tonumber(ARGV[2]) then</span><br><span class="hljs-string">    return 0</span><br><span class="hljs-string">end</span><br><span class="hljs-string">return 1</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">1</span> user:<span class="hljs-number">1234</span>:rate_limit <span class="hljs-number">60</span> <span class="hljs-number">10</span><br></code></pre></td></tr></table></figure>
 <ul>
-<li>计数器 <code>counter</code> 自增，相当于 <code>INCR counter</code>。</li>
-</ul>
-<h4 id="（2）模拟事务"><a href="#（2）模拟事务" class="headerlink" title="（2）模拟事务"></a><strong>（2）模拟事务</strong></h4><p>假设我们要实现转账逻辑：</p>
-<ul>
-<li>从账户 A 扣 100</li>
-<li>给账户 B 加 100</li>
-<li>确保 A 余额足够</li>
-</ul>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">    local balance = redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="hljs-string">    if tonumber(balance) &lt; tonumber(ARGV[1]) then</span><br><span class="hljs-string">        return &#x27;Insufficient funds&#x27;</span><br><span class="hljs-string">    end</span><br><span class="hljs-string">    redis.call(&#x27;DECRBY&#x27;, KEYS[1], ARGV[1])</span><br><span class="hljs-string">    redis.call(&#x27;INCRBY&#x27;, KEYS[2], ARGV[1])</span><br><span class="hljs-string">    return &#x27;Transfer complete&#x27;</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">2</span> userA userB <span class="hljs-number">100</span><br></code></pre></td></tr></table></figure>
-<ul>
-<li>读取 <code>userA</code> 的余额，如果不足则返回 <code>&quot;Insufficient funds&quot;</code>。</li>
-<li>如果余额足够，从 <code>userA</code> 扣款，并增加 <code>userB</code> 余额。</li>
-<li>这保证了整个转账过程的原子性，不会发生中途数据不一致的问题。</li>
+<li><code>INCR</code> 递增请求次数</li>
+<li><code>EXPIRE</code> 设置 60 秒过期</li>
+<li><code>ARGV[2] = 10</code> 表示每分钟最多允许 10 次请求</li>
+<li>如果超过 10 次，返回 <code>0</code>，否则返回 <code>1</code></li>
 </ul>
 <hr>
-<h3 id="6-EVALSHA-提高效率"><a href="#6-EVALSHA-提高效率" class="headerlink" title="6. EVALSHA 提高效率"></a>6. <strong>EVALSHA 提高效率</strong></h3><p>每次使用 <code>EVAL</code> 直接执行脚本，Redis 都需要解析和编译 Lua 代码，这会消耗性能。</p>
-<p>Redis 允许将脚本缓存后 <strong>用 SHA1 哈希值执行</strong>：</p>
-<ol>
-<li><strong>缓存脚本</strong><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">SCRIPT LOAD &quot;return redis.call(&#x27;GET&#x27;, KEYS[1])&quot;<br></code></pre></td></tr></table></figure>
-Redis 返回一个 SHA1 哈希，例如：<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;sha1_hash_value&quot;</span><br></code></pre></td></tr></table></figure></li>
-<li><strong>用 SHA1 运行脚本</strong><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">EVALSHA &quot;sha1_hash_value&quot; 1 mykey<br></code></pre></td></tr></table></figure>
-这样可以提高执行速度，因为 Redis 不需要每次解析 Lua 代码。</li>
+<h3 id="4-Redis-Lua-实现转账"><a href="#4-Redis-Lua-实现转账" class="headerlink" title="4. Redis Lua 实现转账"></a><strong>4. Redis Lua 实现转账</strong></h3><p><strong>用户 A 给用户 B 转账</strong></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">local balance = redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="hljs-string">if tonumber(balance) &lt; tonumber(ARGV[1]) then</span><br><span class="hljs-string">    return &#x27;Insufficient funds&#x27;</span><br><span class="hljs-string">end</span><br><span class="hljs-string">redis.call(&#x27;DECRBY&#x27;, KEYS[1], ARGV[1])</span><br><span class="hljs-string">redis.call(&#x27;INCRBY&#x27;, KEYS[2], ARGV[1])</span><br><span class="hljs-string">return &#x27;Transfer complete&#x27;</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">2</span> userA userB <span class="hljs-number">100</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>检查 <code>userA</code> 余额是否足够</li>
+<li>如果足够，扣除 <code>100</code>，然后给 <code>userB</code> 增加 <code>100</code></li>
+</ul>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><ul>
+<li><strong>Lua 语法简单</strong>，包括变量、控制结构、函数、表等基本功能。</li>
+<li><strong>Redis Lua 脚本</strong> 通过 <code>EVAL</code> 执行，并支持 <code>redis.call()</code> 来调用 Redis 命令。</li>
+<li><strong>Redis Lua 原子性</strong> 确保整个脚本执行过程中数据不会被并发修改。</li>
+<li><strong>Redis Lua 应用场景</strong>：<ol>
+<li><strong>计数器</strong>（如用户访问计数）</li>
+<li><strong>限流</strong>（限制 API 访问频率）</li>
+<li><strong>分布式锁</strong>（保证数据一致性）</li>
+<li><strong>转账系统</strong>（事务性操作）</li>
 </ol>
-<hr>
-<h3 id="7-Lua-脚本的限制"><a href="#7-Lua-脚本的限制" class="headerlink" title="7. Lua 脚本的限制"></a>7. <strong>Lua 脚本的限制</strong></h3><ol>
-<li><strong>不能执行 <code>TIME</code>, <code>MONITOR</code>, <code>SUBSCRIBE</code> 等命令</strong>，因为它们依赖外部状态。</li>
-<li><strong>执行时间不可过长</strong>，否则会阻塞 Redis，影响性能。</li>
-<li><strong>不能直接调用 <code>sleep</code></strong>，Redis 不能在 Lua 脚本里阻塞。</li>
-</ol>
-<hr>
-<h3 id="8-应用场景"><a href="#8-应用场景" class="headerlink" title="8. 应用场景"></a>8. <strong>应用场景</strong></h3><ol>
-<li><p><strong>缓存一致性控制</strong></p>
-<ul>
-<li>例如，批量删除多个键，避免数据残留：<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;redis.call(&#x27;DEL&#x27;, KEYS[1], KEYS[2])&quot;</span> <span class="hljs-number">2</span> key1 key2<br></code></pre></td></tr></table></figure></li>
-</ul>
 </li>
-<li><p><strong>限流（Rate Limiting）</strong></p>
-<ul>
-<li>通过 Lua 实现限流，防止接口被刷：<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">    local current = redis.call(&#x27;INCR&#x27;, KEYS[1])</span><br><span class="hljs-string">    if current == 1 then</span><br><span class="hljs-string">        redis.call(&#x27;EXPIRE&#x27;, KEYS[1], ARGV[1])</span><br><span class="hljs-string">    end</span><br><span class="hljs-string">    if current &gt; tonumber(ARGV[2]) then</span><br><span class="hljs-string">        return 0</span><br><span class="hljs-string">    end</span><br><span class="hljs-string">    return 1</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">1</span> user:<span class="hljs-number">1234</span>:rate_limit <span class="hljs-number">60</span> <span class="hljs-number">10</span><br></code></pre></td></tr></table></figure></li>
-<li>这里 <code>user:1234:rate_limit</code> 记录用户请求数</li>
-<li><code>ARGV[1] = 60</code> 表示 60 秒过期</li>
-<li><code>ARGV[2] = 10</code> 表示 10 次请求限制</li>
-</ul>
-</li>
-<li><p><strong>分布式锁</strong></p>
-<ul>
-<li>获取锁：<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;return redis.call(&#x27;SET&#x27;, KEYS[1], ARGV[1], &#x27;NX&#x27;, &#x27;EX&#x27;, ARGV[2])&quot;</span> <span class="hljs-number">1</span> mylock <span class="hljs-string">&quot;1234&quot;</span> <span class="hljs-number">30</span><br></code></pre></td></tr></table></figure></li>
-<li>释放锁：<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs lua">EVAL <span class="hljs-string">&quot;</span><br><span class="hljs-string">    if redis.call(&#x27;GET&#x27;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">        return redis.call(&#x27;DEL&#x27;, KEYS[1])</span><br><span class="hljs-string">    else</span><br><span class="hljs-string">        return 0</span><br><span class="hljs-string">    end</span><br><span class="hljs-string">&quot;</span> <span class="hljs-number">1</span> mylock <span class="hljs-string">&quot;1234&quot;</span><br></code></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li><code>EVAL</code> 运行 Lua 脚本，可以操作 Redis 键值。</li>
-<li><code>redis.call()</code> 执行 Redis 命令，<code>redis.pcall()</code> 允许错误恢复。</li>
-<li>Lua 脚本 <strong>原子执行</strong>，避免竞争条件，提高性能。</li>
-<li><code>EVALSHA</code> 允许用 SHA1 执行缓存脚本，提高效率。</li>
-<li>适用于 <strong>事务控制、限流、分布式锁、批量操作</strong> 等场景。</li>
 </ul>
 
                 
@@ -517,8 +498,8 @@ Redis 返回一个 SHA1 哈希，例如：<figure class="highlight 1c"><table><t
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/01/02/middleware/redisMq2/" title="Redis 作为消息队列及幂等性处理">
-                        <span class="hidden-mobile">Redis 作为消息队列及幂等性处理</span>
+                      <a href="/2025/01/02/middleware/redisMq/" title="Redis 作为消息队列">
+                        <span class="hidden-mobile">Redis 作为消息队列</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
