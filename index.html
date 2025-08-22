@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=https://pengjiancheng.com">
+    <title>欢迎访问我的空间</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            max-width: 500px;
+            width: 90%;
+        }
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            color: #2c3e50;
+        }
+
+        .redirect-info {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #495057;
+        }
+        .manual-link {
+            color: #495057;
+            text-decoration: none;
+            border: 1px solid #dee2e6;
+            padding: 12px 24px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 10px;
+            background: #f8f9fa;
+        }
+        .manual-link:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            border-top-color: #6c757d;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="welcome-title">欢迎访问我的空间</h1>
+        <p class="redirect-info">
+            正在前往主站页面
+            <span class="loading-indicator"></span>
+        </p>
+        <a href="https://pengjiancheng.com" class="manual-link">
+            立即前往主站
+        </a>
+    </div>
+    
+    <script>
+        // 立即重定向
+        window.location.replace("https://pengjiancheng.com");
+    </script>
+</body>
+</html>
